@@ -1,0 +1,8 @@
+
+version: 2
+
+models:
+  - name: school_agenecy_join.sql
+    description: "A starter dbt model"
+    
+  
