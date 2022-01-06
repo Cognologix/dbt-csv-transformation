@@ -1,0 +1,10 @@
+
+version: 2
+
+models:
+  - name: edfi_calender.sql
+    description: "Edfi school dbt model"
+  - name: edfi_school.sql
+    description: "Edfi school dbt model"
+  - name: edfi_student.sql
+    description: "Edfi school dbt model"

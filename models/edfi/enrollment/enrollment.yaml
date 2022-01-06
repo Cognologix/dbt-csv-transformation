@@ -1,0 +1,6 @@
+
+version: 2
+
+models:
+  - name: edfi_ssa.sql
+    description: "Edfi SSA"
