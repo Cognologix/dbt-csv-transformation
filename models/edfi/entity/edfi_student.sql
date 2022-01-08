@@ -1,9 +1,13 @@
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
 WITH st_base AS (
 	SELECT
-		sb.operation,
 		sb.studentuniqueid,
+		uuid_generate_v4() AS resourceid, 
+		json_build_object(
+			'studentuniqueid', sb.studentuniqueid
+		)AS externalid,
+		'STUDENT' AS resourcetype,
+		sb.operation,
+		0 AS status,
 		json_build_object(
 			'personId', sb.studentuniqueid,
 			'sourceSystemDescriptor', sb.sourcesystemdescriptor
@@ -93,11 +97,10 @@ st_visas AS (
 )
 
 SELECT
-	uuid_generate_v4() AS uniqueid, 
-	LPAD(sb.studentuniqueid::text, 6, '0') AS resourceid,
-	'STUDENT' AS resourcetype,
-	sb.operation,
-	0 AS status,
+	resourceid,
+	externalid,
+	resourcetype,
+	operation,
 	json_build_object(
 		'studentUniqueId', sb.studentuniqueid,
 		'identificationDocuments', sb.identificationdocuments,
@@ -120,7 +123,8 @@ SELECT
 		'personalIdentificationDocuments', spid.personalIdentificationDocuments,
 		'personalTitlePrefix', sb.personalTitlePrefix,
 		'visas', sv.visas
-	) AS payload
+	) AS payload,
+	status
 FROM
 	st_base AS sb
 LEFT OUTER JOIN

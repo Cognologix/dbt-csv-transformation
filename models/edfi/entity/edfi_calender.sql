@@ -5,7 +5,7 @@ WITH calendar AS (
             'calendarCode', cb.calendarcode,
             'schoolId', cb.schoolid,
             'schoolYear', cb.schoolyear
-            )  AS externalid,
+        )  AS externalid,
 		'CALENDER' AS resourcetype,
         'CREATE' AS operation,
 		0 AS status,

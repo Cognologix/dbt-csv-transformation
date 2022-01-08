@@ -1,8 +1,13 @@
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
 WITH base AS (
 	SELECT 
+		uuid_generate_v4() AS resourceid, 
+		json_build_object(
+			'schoolid', ssb.schoolid,
+			'studentuniqueid', ssb.studentuniqueid
+		)AS externalid,
+		'SSA' AS resourcetype,
 		ssb.operation,
+		0 AS status,
 		ssb.schoolid,
 		ssb.studentuniqueid,
 		ssb.calendarreference_schoolid,
@@ -84,35 +89,34 @@ education_plans AS (
 )
 
 SELECT 
-		uuid_generate_v4() AS uniqueid, 
-		LPAD(ssb.schoolid::text, 16, '0') ||
-		LPAD(ssb.studentuniqueid::text, 6, '0') AS resourceid,
-		'SSA' AS resourcetype,		
-		ssb.operation,
-		0 AS status,
-		json_build_object(
-			'entryDate', ssb.entrydate,
-			'calendarReference', cb.calendarReference,
-			'classOfSchoolYearTypeReference', ssb.classOfSchoolYearTypeReference,
-			'graduationPlanReference', ssb.graduationPlanReference,
-			'schoolReference', ssb.schoolReference,
-			'schoolYearTypeReference', ssb.schoolYearTypeReference,
-			'studentReference', ssb.studentReference,
-			'alternativeGraduationPlans', agpr.alternativeGraduationPlans,
-			'educationPlans', ep.educationPlans,
-			'employedWhileEnrolled', ssb.employedwhileenrolled,
-			'entryGradeLevelDescriptor', ssb.entrygradeleveldescriptor,
-			'entryGradeLevelReasonDescriptor', ssb.entrygradelevelreasondescriptor,
-			'entryTypeDescriptor', ssb.entrytypedescriptor,
-			'exitWithdrawDate', ssb.exitwithdrawdate,
-			'exitWithdrawTypeDescriptor', ssb.exitwithdrawtypedescriptor,
-			'fullTimeEquivalency', ssb.fulltimeequivalency,
-			'primarySchool', ssb.primaryschool,
-			'repeatGradeIndicator', ssb.repeatgradeindicator,
-			'residencyStatusDescriptor', ssb.residencystatusdescriptor,
-			'schoolChoiceTransfer', ssb.schoolchoicetransfer,
-			'termCompletionIndicator', ssb.termcompletionindicator
-		) AS jsonobject
+	resourceid,
+	externalid,
+	resourcetype,
+	operation,
+	json_build_object(
+		'entryDate', ssb.entrydate,
+		'calendarReference', cb.calendarReference,
+		'classOfSchoolYearTypeReference', ssb.classOfSchoolYearTypeReference,
+		'graduationPlanReference', ssb.graduationPlanReference,
+		'schoolReference', ssb.schoolReference,
+		'schoolYearTypeReference', ssb.schoolYearTypeReference,
+		'studentReference', ssb.studentReference,
+		'alternativeGraduationPlans', agpr.alternativeGraduationPlans,
+		'educationPlans', ep.educationPlans,
+		'employedWhileEnrolled', ssb.employedwhileenrolled,
+		'entryGradeLevelDescriptor', ssb.entrygradeleveldescriptor,
+		'entryGradeLevelReasonDescriptor', ssb.entrygradelevelreasondescriptor,
+		'entryTypeDescriptor', ssb.entrytypedescriptor,
+		'exitWithdrawDate', ssb.exitwithdrawdate,
+		'exitWithdrawTypeDescriptor', ssb.exitwithdrawtypedescriptor,
+		'fullTimeEquivalency', ssb.fulltimeequivalency,
+		'primarySchool', ssb.primaryschool,
+		'repeatGradeIndicator', ssb.repeatgradeindicator,
+		'residencyStatusDescriptor', ssb.residencystatusdescriptor,
+		'schoolChoiceTransfer', ssb.schoolchoicetransfer,
+		'termCompletionIndicator', ssb.termcompletionindicator
+	) AS payload,
+	status
 FROM 
 	base AS ssb
 LEFT OUTER JOIN
