@@ -1,4 +1,4 @@
-ITH sc_base AS (
+WITH sc_base AS (
     SELECT
         sb.operation,
         sb.schoolid,
