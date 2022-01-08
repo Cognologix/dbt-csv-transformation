@@ -6,9 +6,9 @@ WITH calendar AS (
 		LPAD(cb.calendarcode::text, 16, '0') ||
 		LPAD(cb.schoolid::text, 16, '0') ||
 		LPAD(cb.schoolyear::text, 6, '0') AS resourceid,
-        'CREATE' AS Operation,
 		0 AS status,
-		'CALENDER' AS tabletype,
+		'CALENDER' AS resourcetype,
+        'CREATE' AS operation,
 		json_build_object(
 			'calendarCode', cb.calendarcode,
 			'schoolId', cb.schoolid,
@@ -21,8 +21,8 @@ WITH calendar AS (
 SELECT 
     uid, 
 	resourceid,
+	resourcetype,
 	operation,
-	tabletype,
 	payload
 FROM 
     calendar
