@@ -1,11 +1,11 @@
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
 WITH calendar AS (
 	SELECT
-		uuid_generate_v4() AS uniqueid, 
-		LPAD(cb.calendarcode::text, 16, '0') ||
-		LPAD(cb.schoolid::text, 16, '0') ||
-		LPAD(cb.schoolyear::text, 6, '0') AS resourceid,
+		uuid_generate_v4() AS resourceid,
+        json_build_object(
+            'calendarCode', cb.calendarcode,
+            'schoolId', cb.schoolid,
+            'schoolYear', cb.schoolyear
+            )  AS externalid,
 		'CALENDER' AS resourcetype,
         'CREATE' AS operation,
 		0 AS status,
@@ -15,14 +15,15 @@ WITH calendar AS (
 			'schoolYear', cb.schoolyear,
             'calendarTypeDescriptor', cb.calendartypedescriptor
 		) AS payload
-	FROM 
+	FROM
 		calendar_base AS cb
 )
-SELECT 
-    uniqueid, 
-	resourceid,
+SELECT
+    resourceid,
+    externalid,
 	resourcetype,
 	operation,
-	payload
-FROM 
+	payload,
+    status
+FROM
     calendar
