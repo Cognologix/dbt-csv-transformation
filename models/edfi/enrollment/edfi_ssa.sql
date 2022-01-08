@@ -12,6 +12,7 @@ WITH base AS (
 		ssb.studentuniqueid,
 		ssb.calendarreference_schoolid,
 		ssb.calendarreference_schoolyear,
+		ssb.calendarcode,
 		ssb.entrydate,	
 		json_build_object(
 			'schoolYear', ssb.classofschoolyeartypereference_schoolyear
@@ -49,6 +50,7 @@ calendar AS (
 	SELECT
 		cb.schoolid,
 		cb.schoolyear,
+		cb.calendarcode,
 		json_build_object(
 			'calendarCode', cb.calendarcode,
 			'schoolId', cb.schoolid,
@@ -123,7 +125,8 @@ LEFT OUTER JOIN
 	calendar AS cb
 ON
 	cb.schoolid = ssb.calendarreference_schoolid AND 
-	cb.schoolyear = ssb.calendarreference_schoolyear
+	cb.schoolyear = ssb.calendarreference_schoolyear AND
+	cb.calendarcode = ssb.calendarcode
 
 LEFT OUTER JOIN
 	alternate_graduation_plan_reference AS agpr
