@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 WITH base AS (
 	SELECT 
 		ssb.operation,
@@ -82,9 +84,12 @@ education_plans AS (
 )
 
 SELECT 
+		uuid_generate_v4() AS uniqueid, 
+		LPAD(ssb.schoolid::text, 16, '0') ||
+		LPAD(ssb.studentuniqueid::text, 6, '0') AS resourceid,
+		'SSA' AS resourcetype,		
 		ssb.operation,
-		ssb.schoolid,
-		ssb.studentuniqueid,
+		0 AS status,
 		json_build_object(
 			'entryDate', ssb.entrydate,
 			'calendarReference', cb.calendarReference,

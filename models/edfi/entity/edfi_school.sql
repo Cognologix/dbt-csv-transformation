@@ -1,7 +1,13 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 WITH sc_base AS (
     SELECT
-        sb.operation,
-        sb.schoolid,
+		sb.schoolid,
+		sb.operation,
+		uuid_generate_v4() AS uniqueid, 
+		LPAD(sb.schoolid::text, 6, '0') AS resourceid,
+		'SCHOOL' AS resourcetype,
+		0 AS status,
 		json_build_object(
 			'localEducationAgencyId', sb.localeducationagencyid
 		) AS localEducationAgencyReference,
@@ -210,11 +216,13 @@ sc_categories AS (
 	GROUP BY
 		sc.schoolid
 )
-​
-​
+
 SELECT 
-	sb.operation,
-    sb.schoolid,
+	uniqueid, 
+	resourceid,
+	resourcetype,
+	operation,
+	status,
 	json_build_object(
 		'educationOrganizationCategories', seoc.educationOrganizationCategories,
 		'gradeLevels', sg.gradeLevels,
@@ -236,7 +244,7 @@ SELECT
 		'shortNameOfInstitution', sb.shortNameOfInstitution,
 		'titleIPartASchoolDesignationDescriptor', sb.titleIPartASchoolDesignationDescriptor,
 		'webSite', sb.webSite
-	) AS jsonobject
+	) AS payload
 FROM 
 	sc_base AS sb
 LEFT OUTER JOIN
@@ -271,5 +279,3 @@ LEFT OUTER JOIN
 	sc_categories AS sc
 ON
 	sc.schoolid = sb.schoolid
-​
-​
