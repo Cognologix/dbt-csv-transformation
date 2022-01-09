@@ -28,7 +28,8 @@ sc_education_organization_category AS (
 	SELECT
 		seoc.schoolid,
 		jsonb_agg(json_build_object(
-				'educationorganizationcategorydescriptor', seoc.educationorganizationcategorydescriptor
+				-- 'educationorganizationcategorydescriptor', seoc.educationorganizationcategorydescriptor
+				'educationorganizationcategorydescriptor', 'uri://ed-fi.org/CalendarTypeDescriptor#School'
             )
         ) AS educationOrganizationCategories
 	FROM
