@@ -46,8 +46,11 @@ WITH base AS (
 		ssb.schoolchoicetransfer,
 		ssb.termcompletionindicator,
 		json_build_object(
-			'txADAEligibilityDescriptor', ssb.tx_adaeligibilitydescriptor,
-			'txStudentAttributionDescriptor', ssb.tx_studentattributiondescriptor
+			'TexasExtensions', 
+			json_build_object(
+				'txADAEligibilityDescriptor', ssb.tx_adaeligibilitydescriptor,
+				'txStudentAttributionDescriptor', ssb.tx_studentattributiondescriptor
+			)
 		) AS _ext
 	FROM 
 		public.ssa_base AS ssb
