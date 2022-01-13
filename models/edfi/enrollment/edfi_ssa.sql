@@ -10,9 +10,11 @@ WITH base AS (
 		0 AS status,
 		ssb.schoolid,
 		ssb.studentuniqueid,
-		ssb.calendarreference_schoolid,
-		ssb.calendarreference_schoolyear,
-		ssb.calendarcode,
+		json_build_object(
+			'calendarCode', ssb.calendarcode,
+			'schoolId', calendarreference_schoolid,
+			'schoolYear', ssb.calendarreference_schoolyear
+		) AS calendarReference,
 		ssb.entrydate,	
 		json_build_object(
 			'schoolYear', ssb.classofschoolyeartypereference_schoolyear
@@ -42,7 +44,11 @@ WITH base AS (
 		ssb.repeatgradeindicator,
 		ssb.residencystatusdescriptor,
 		ssb.schoolchoicetransfer,
-		ssb.termcompletionindicator
+		ssb.termcompletionindicator,
+		json_build_object(
+			'txADAEligibilityDescriptor', ssb.tx_adaeligibilitydescriptor,
+			'txStudentAttributionDescriptor', ssb.tx_studentattributiondescriptor
+		) AS _ext
 	FROM 
 		public.ssa_base AS ssb
 ),
@@ -97,7 +103,7 @@ SELECT
 	operation,
 	json_build_object(
 		'entryDate', ssb.entrydate,
-		'calendarReference', cb.calendarReference,
+		'calendarReference', ssb.calendarReference,
 		'classOfSchoolYearTypeReference', ssb.classOfSchoolYearTypeReference,
 		'graduationPlanReference', ssb.graduationPlanReference,
 		'schoolReference', ssb.schoolReference,
@@ -116,18 +122,12 @@ SELECT
 		'repeatGradeIndicator', ssb.repeatgradeindicator,
 		'residencyStatusDescriptor', ssb.residencystatusdescriptor,
 		'schoolChoiceTransfer', ssb.schoolchoicetransfer,
-		'termCompletionIndicator', ssb.termcompletionindicator
+		'termCompletionIndicator', ssb.termcompletionindicator,
+		'_ext', ssb._ext
 	) AS payload,
 	status
 FROM 
 	base AS ssb
-LEFT OUTER JOIN
-	calendar AS cb
-ON
-	cb.schoolid = ssb.calendarreference_schoolid AND 
-	cb.schoolyear = ssb.calendarreference_schoolyear AND
-	cb.calendarcode = ssb.calendarcode
-
 LEFT OUTER JOIN
 	alternate_graduation_plan_reference AS agpr
 ON
