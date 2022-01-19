@@ -219,103 +219,7 @@ sc_categories AS (
 		public.school_categories AS sc
 	GROUP BY
 		sc.schoolid
-),
-charter_waitlist AS
-(
-	SELECT
-		scw.schoolid,
-		jsonb_agg(json_build_object(
-				'txBeginDate', scw.tx_begindate,
-				'txEndDate', scw.tx_enddate,
-				'txCharterAdmissionWaitlist', scw.tx_charteradmissionwaitlist,
-				'txCharterEducationalEnrollmentCapacity', scw.tx_chartereducationalenrollmentcapacity,
-				'txNumberCharterStudentsEnrolled', scw.tx_numbercharterstudentsenrolled
-			) 
-		) AS  charterWaitlists
-	FROM
-		public.school_charter_waitlist AS scw
-	GROUP BY
-		scw.schoolid
-),
-elo_activities AS
-(
-	SELECT
-		seo.schoolid,
-		jsonb_agg(json_build_object(
-				'txELOActivityDescriptor', seo.tx_eloactivitydescriptor,
-				'txELODaysScheduledPerYear', seo.tx_elodaysscheduledperyear,
-				'txELOMinutesScheduledPerDay', seo."tx_eLOMinutesSche duledPerDay"
-			)
-		) AS eloActivities
-	FROM
-		public.school_elo_activities AS seo
-	GROUP BY
-		seo.schoolid
-),  
-elo_types AS (
-	SELECT
-		sset.schoolid,
-		json_build_object(
-			'txELOTypeDescriptor', sset.tx_elotypedescriptor,
-			'txBeginDate', sset.tx_begindate,
-			'txEndDate', sset.tx_enddate,
-			'eloActivities', seo. eloActivities
-		) AS eloTypes
-	FROM
-		public.school_elo_types AS sset
-	LEFT JOIN
-		elo_activities AS seo
-	ON
-		seo.schoolid = sset.schoolid
-),
-nslp_types AS
-(
-	SELECT
-	snt.schoolid,
-	jsonb_agg(json_build_object (
-			'txNSLPTypeDescriptor', snt.tx_nslptypedescriptor,
-			'txBeginDate', snt.tx_begindate,
-			'txEndDate', snt.tx_enddate
-		)
-	) AS nslpTypes
-	FROM
-		public.school_nslp_types AS snt
-	GROUP BY
-		snt.schoolid
-),
-extensions AS
-(
-	SELECT 
-		sb.schoolid,
-		json_build_object(
-			'TexasExtensions',
-			json_build_object(
-				'txAdditionalDaysProgram,', sb.txAdditionalDaysProgram,
-				'txNumberOfBullyingIncidents,', sb.txNumberOfBullyingIncidents,
-				'txNumberOfCyberbullyingIncidents', sb.txNumberOfCyberbullyingIncidents,
-				'txPKFullDayWaiver', sb.txPKFullDayWaiver,
-				'charterWaitlists', scw.charterWaitlists,
-				'seo.eloTypes', seo.eloTypes,
-				'nslpTypes', snt.nslpTypes
-			) 
-		)
-		AS _ext
-	FROM 
-		sc_base AS sb
-	LEFT JOIN
-		charter_waitlist AS scw
-	ON
-		scw.schoolid = sb.schoolid
-	LEFT JOIN
-		elo_types AS seo
-	ON
-		seo.schoolid = sb.schoolid
-	LEFT JOIN
-		nslp_types AS snt
-	ON
-		snt.schoolid = sb.schoolid
 )
-
 SELECT 
 	resourceid,
 	externalid,
@@ -341,8 +245,7 @@ SELECT
 		'schoolTypeDescriptor', sb.schoolTypeDescriptor,
 		'shortNameOfInstitution', sb.shortNameOfInstitution,
 		'titleIPartASchoolDesignationDescriptor', sb.titleIPartASchoolDesignationDescriptor,
-		'webSite', sb.webSite,
-		'_ext', extensions._ext
+		'webSite', sb.webSite
 	) AS payload,
 	sb.status
 FROM 
@@ -379,7 +282,3 @@ LEFT OUTER JOIN
 	sc_categories AS sc
 ON
 	sc.schoolid = sb.schoolid
-LEFT OUTER JOIN
-	extensions
-ON
-	extensions.schoolid = sb.schoolid

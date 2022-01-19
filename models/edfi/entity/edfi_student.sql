@@ -98,60 +98,6 @@ st_visas AS (
 		public.student_visas AS sv
 	GROUP BY
 		sv.studentuniqueid
-),
-census_block_groups AS 
-(
-	SELECT
-		scbg.studentuniqueid,
-		jsonb_agg(json_build_object(
-				'txStudentCensusBlockGroup', scbg.tx_studentcensusblockgroup,
-				'txBeginDate', scbg.tx_begindate,
-				'txEndDate', scbg.tx_enddate
-			)
-		) AS censusBlockGroups
-	FROM
-		public.student_census_block_groups AS scbg
-	GROUP BY
-			scbg.studentuniqueid
-),
-crisis_events AS (
-	SELECT
-		sce.studentuniqueid,
-		jsonb_agg(json_build_object(
-				'txCrisisEventDescriptor', sce.tx_crisiseventdescriptor,
-				'txBeginDate', sce.tx_begindate,
-				'txEndDate', sce.tx_enddate
-			)
-		) AS crisisEvents
-	FROM
-		public.student_crisis_events AS sce
-	GROUP BY
-		sce.studentuniqueid
-),
-extensions AS
-(
-	SELECT 
-		sb.studentuniqueid,
-		json_build_object(
-			'TexasExtensions',
-			json_build_object(
-				'txAdultPreviousAttendanceIndicator', sb.tx_adultpreviousattendanceindicator,
-				'txLocalStudentID', sb.tx_localstudentid,
-				'txStudentID', sb.tx_studentid,
-				'censusBlockGroups', scbg.censusBlockGroups,
-				'crisisEvents', sce.crisisEvents
-			)
-		) AS _ext
-	FROM
-		st_base as sb
-	LEFT JOIN 
-		census_block_groups As scbg
-	ON
-		scbg.studentuniqueid = sb.studentuniqueid
-	LEFT JOIN 
-		crisis_events As sce
-	ON
-		sce.studentuniqueid = sb.studentuniqueid
 )
 
 SELECT
@@ -180,8 +126,7 @@ SELECT
 		'otherNames', son.othernames,
 		'personalIdentificationDocuments', spid.personalIdentificationDocuments,
 		'personalTitlePrefix', sb.personalTitlePrefix,
-		'visas', sv.visas,
-		'_ext', extensions._ext
+		'visas', sv.visas
 	) AS payload,
 	status
 FROM
@@ -202,7 +147,3 @@ LEFT OUTER JOIN
 	st_visas AS sv
 ON 
 	sv.studentuniqueid = sb.studentuniqueid
-LEFT OUTER JOIN
-	extensions
-ON
-	extensions.studentuniqueid = sb.studentuniqueid

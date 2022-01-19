@@ -44,29 +44,9 @@ WITH base AS (
 		ssb.repeatgradeindicator,
 		ssb.residencystatusdescriptor,
 		ssb.schoolchoicetransfer,
-		ssb.termcompletionindicator,
-		json_build_object(
-			'TexasExtensions', 
-			json_build_object(
-				'txADAEligibilityDescriptor', ssb.tx_adaeligibilitydescriptor,
-				'txStudentAttributionDescriptor', ssb.tx_studentattributiondescriptor
-			)
-		) AS _ext
+		ssb.termcompletionindicator
 	FROM 
 		public.ssa_base AS ssb
-),
-calendar AS (
-	SELECT
-		cb.schoolid,
-		cb.schoolyear,
-		cb.calendarcode,
-		json_build_object(
-			'calendarCode', cb.calendarcode,
-			'schoolId', cb.schoolid,
-			'schoolYear', cb.schoolyear
-		) AS calendarReference
-	FROM 
-		calendar_base AS cb
 ),
 alternate_graduation_plan_reference AS (
 	SELECT
@@ -125,8 +105,7 @@ SELECT
 		'repeatGradeIndicator', ssb.repeatgradeindicator,
 		'residencyStatusDescriptor', ssb.residencystatusdescriptor,
 		'schoolChoiceTransfer', ssb.schoolchoicetransfer,
-		'termCompletionIndicator', ssb.termcompletionindicator,
-		'_ext', ssb._ext
+		'termCompletionIndicator', ssb.termcompletionindicator
 	) AS payload,
 	status
 FROM 
