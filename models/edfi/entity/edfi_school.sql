@@ -283,6 +283,32 @@ nslp_types AS
 	GROUP BY
 		snt.schoolid
 ),
+post_secondary_institution_reference AS (
+	SELECT 
+		spsir.schoolid,
+		json_build_object(
+			'postSecondaryInstitutionReference', 
+				json_build_object(
+					'postSecondaryInstitutionId', spsir.postsecondaryinstitutionid
+				)
+		) AS TPDM
+	FROM
+		public.school_post_secondary_institution_reference spsir
+),
+campus_enrollment_types AS (
+	SELECT 
+		scet.schoolid,
+		jsonb_agg(json_build_object(
+				'txCampusEnrollmentTypeDescriptor', scet.tx_campusenrollmenttypedescriptor,
+				'txBeginDate', scet.tx_begindate,
+				'txEndDate', scet.tx_enddate
+			)
+		) AS campusEnrollmentTypes
+	FROM
+		public.school_campus_enrollment_types AS scet
+	GROUP BY
+		scet.schoolid
+),
 extensions AS
 (
 	SELECT 
@@ -290,13 +316,15 @@ extensions AS
 		json_build_object(
 			'TexasExtensions',
 			json_build_object(
-				'txAdditionalDaysProgram,', sb.txAdditionalDaysProgram,
-				'txNumberOfBullyingIncidents,', sb.txNumberOfBullyingIncidents,
+				'txAdditionalDaysProgram', sb.txAdditionalDaysProgram,
+				'txNumberOfBullyingIncidents', sb.txNumberOfBullyingIncidents,
 				'txNumberOfCyberbullyingIncidents', sb.txNumberOfCyberbullyingIncidents,
 				'txPKFullDayWaiver', sb.txPKFullDayWaiver,
+				'campusEnrollmentTypes', scet.campusEnrollmentTypes,
 				'charterWaitlists', scw.charterWaitlists,
 				'seo.eloTypes', seo.eloTypes,
-				'nslpTypes', snt.nslpTypes
+				'nslpTypes', snt.nslpTypes,
+				'TPDM', sipsir.TPDM
 			) 
 		)
 		AS _ext
@@ -314,6 +342,14 @@ extensions AS
 		nslp_types AS snt
 	ON
 		snt.schoolid = sb.schoolid
+	LEFT JOIN
+		post_secondary_institution_reference AS sipsir
+	ON
+		sipsir.schoolid = sb.schoolid	
+	LEFT JOIN
+		campus_enrollment_types AS scet
+	ON 
+		scet.schoolid = sb.schoolid	
 )
 
 SELECT 
@@ -345,7 +381,6 @@ SELECT
 		'_ext', extensions._ext
 	) AS payload,
 	sb.status
-FROM 
 	sc_base AS sb
 LEFT OUTER JOIN
 	sc_education_organization_category AS seoc
