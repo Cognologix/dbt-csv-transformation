@@ -2,14 +2,14 @@ WITH st_student_census_block_groups AS (
 	SELECT
 		scbg.studentuniqueid,
 		jsonb_agg(json_build_object(
-				'txStudentCensusBlockGroup', scbg.txstudentcensusblockgroup,
-				'txBeginDate', scbg.txbegindate,
-				'txEndDate', scbg.txenddate
+				'txStudentCensusBlockGroup', scbg.tx_studentcensusblockgroup,
+				'txBeginDate', scbg.tx_begindate,
+				'txEndDate', scbg.tx_enddate
 
 			)
 		) AS studentCensusBlockGroups
 	FROM
-		{{ source('public', '_airbyte_raw_student_census_block_groups')}} AS scbg
+		{{ source('public', 'student_census_block_groups')}} AS scbg
 	GROUP BY
 		scbg.studentuniqueid
 )

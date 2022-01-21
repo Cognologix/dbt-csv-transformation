@@ -34,6 +34,16 @@ models:
     # Applies to all files under models/marts/core/
     edfi:
       entity:
-        materialized: table
+        +materialized: view
       enrollment:
-        materialized: table
+        +materialized: view
+    AISD:
+      Final:
+        student:
+          +materialized: table
+      Raw:
+        student:
+          +materialized: table
+      Staging:
+        student:
+          +materialized: table

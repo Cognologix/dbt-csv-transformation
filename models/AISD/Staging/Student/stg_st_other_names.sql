@@ -16,9 +16,11 @@ final as (
 				'middleName', TRIM(son.middlename),
 				'personalTitlePrefix', TRIM(son.personaltitleprefix)
 			)
-	FROM
+		)
+   FROM
 	    son
-	    #cleasing function
+   GROUP BY
+		son.studentuniqueid
 
 )
 

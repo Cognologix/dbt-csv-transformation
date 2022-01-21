@@ -37,8 +37,8 @@ final as (
 		TRIM(sb.multiplebirthstatus),
 		TRIM(sb.personaltitleprefix),
 		TRIM(sb.tx_adultpreviousattendanceindicator),
-		TRIM(sb.tx_localstudentid),
-		TRIM(sb.tx_studentid)
+		sb.tx_localstudentid,
+		sb.tx_studentid
 
 	FROM
 		sb

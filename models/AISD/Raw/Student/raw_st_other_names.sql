@@ -11,7 +11,7 @@ WITH st_other_names AS (
 			)
 		) AS otherNames
 	FROM
-		{{ source('public', '_airbyte_raw_student_other_names')}} AS son
+		{{ source('public', 'student_other_names')}} AS son
 	GROUP BY
 		son.studentuniqueid
 )

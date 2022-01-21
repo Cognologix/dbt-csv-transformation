@@ -8,12 +8,15 @@ final as (
     SELECT
 		TRIM(scbg.studentuniqueid),
 		jsonb_agg(json_build_object(
-				'txStudentCensusBlockGroup', TRIM(scbg.txstudentcensusblockgroup),
-				'txBeginDate', TRIM(scbg.txbegindate),
-				'txEndDate', TRIM(scbg.txenddate)
+				'txStudentCensusBlockGroup', TRIM(scbg.tx_studentcensusblockgroup),
+				'txBeginDate', TRIM(scbg.tx_begindate),
+				'txEndDate', TRIM(scbg.tx_enddate)
 				)
+			)
 	FROM
 		scbg
+	GROUP BY
+		scbg.studentuniqueid
 
 )
 

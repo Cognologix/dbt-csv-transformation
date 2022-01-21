@@ -17,8 +17,11 @@ final as (
 				'issuerDocumentIdentificationCode', TRIM(spid.issuerdocumentidentificationcode),
 				'issuerName', TRIM(spid.issuername)
 			)
+		)
 	FROM
 	    spid
+	GROUP BY
+		spid.studentuniqueid
 
 )
 

@@ -18,8 +18,13 @@ final as (
 				'issuerDocumentIdentificationCode', TRIM(sid.issuerdocumentidentificationcode),
 				'issuerName', TRIM(sid.issuername)
 			)
+		)
 	FROM
 	  sid
+	GROUP BY
+		sid.studentuniqueid
+
+)
 
 
 select * from final;

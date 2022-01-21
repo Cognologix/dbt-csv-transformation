@@ -6,7 +6,7 @@ WITH st_visas AS (
 			)
 		) AS visas
 	FROM
-		{{ source('public', '_airbyte_raw_student_visas')}} AS sv
+		{{ source('public', 'student_visas')}} AS sv
 	GROUP BY
 		sv.studentuniqueid
 )

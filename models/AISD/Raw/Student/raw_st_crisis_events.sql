@@ -2,13 +2,13 @@ WITH st_crisis_events AS (
 	SELECT
 		sce.studentuniqueid,
 		jsonb_agg(json_build_object(
-				'txCrisisEventDescriptor', sce.txcrisiseventdescriptor,
-				'txBeginDate', sce.txbegindate,
-				'txEndDate', sce.txenddate
+				'txCrisisEventDescriptor', sce.tx_crisiseventdescriptor,
+				'txBeginDate', sce.tx_begindate,
+				'txEndDate', sce.tx_enddate
 			)
 		) AS crisisEvents
 	FROM
-		{{ source('public', '_airbyte_raw_student_crisis_events')}} AS sce
+		{{ source('public', 'student_crisis_events')}} AS sce
 	GROUP BY
 		sce.studentuniqueid
 )

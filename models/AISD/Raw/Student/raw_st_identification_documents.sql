@@ -12,7 +12,7 @@ WITH st_identification_documents AS (
 			)
 		) AS identificationDocuments
 	FROM
-		{{ source('public', '_airbyte_raw_student_identification_documents')}} AS sid
+		{{ source('public', 'student_identification_documents')}} AS sid
 	GROUP BY
 		sid.studentuniqueid
 )

@@ -32,7 +32,8 @@ WITH st_base AS (
 		sb.tx_studentid
 
 	FROM
-		{{ source('public', '_airbyte_raw_student_base')}} AS sb
+		{{ source('public', 'student_base')}} AS sb
+
 )
 
 select * from st_base;

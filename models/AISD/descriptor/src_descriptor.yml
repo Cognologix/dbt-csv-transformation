@@ -1,0 +1,10 @@
+version: 2
+sources:
+  - name: AISD
+    database: aisd_poc
+    schema: dbt_test
+    tables:
+      - name: descriptor
+        description: Raw all descriptors
+      - name: visadescriptor
+        description: Raw visa descriptor
