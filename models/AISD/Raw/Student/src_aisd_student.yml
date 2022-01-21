@@ -1,0 +1,20 @@
+version: 2
+sources:
+  - name: AISD
+    database: aisd_poc
+    schema: public
+    tables:
+      - name: _airbyte_raw_student_base
+        description: Raw Student Base data
+      - name: _airbyte_raw_student_visas
+        description: Raw Student other names data
+      - name: _airbyte_raw_student_crisis_events
+        description: Raw Student level crisis events data
+      - name: _airbyte_raw_student_identification_documents
+        description:
+      - name: _airbyte_raw_student_census_block_groups
+        description:
+      - name: _airbyte_raw_student_other_names
+        description:
+      - name: _airbyte_raw_student_personal_identification_documents
+        description:
