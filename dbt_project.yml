@@ -32,18 +32,25 @@ clean-targets:         # directories to be removed by `dbt clean`
 models:
   dbt_csv_transformation:
     # Applies to all files under models/marts/core/
-    edfi:
-      entity:
-        +materialized: view
-      enrollment:
-        +materialized: view
     AISD:
       Final:
-        student:
-          +materialized: table
+        Student:
+          materialized: 'table'
+        School:
+          materialized: 'table'
+        Calendar:
+          materialized: 'table'
+        SSA:
+          materialized: 'table'
       Raw:
-        student:
-          +materialized: table
+        Student:
+          materialized: 'table'
+        School:
+          materialized: 'table'
+        Calendar:
+          materialized: 'table'
+        SSA:
+          materialized: 'table'
       Staging:
         student:
           +materialized: table
