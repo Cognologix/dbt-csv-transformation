@@ -381,6 +381,7 @@ SELECT
 		'_ext', extensions._ext
 	) AS payload,
 	sb.status
+FROM
 	sc_base AS sb
 LEFT OUTER JOIN
 	sc_education_organization_category AS seoc
