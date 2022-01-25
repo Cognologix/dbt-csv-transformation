@@ -21,8 +21,7 @@ WITH st_base AS (
 		TRIM(sb.tx_adultpreviousattendanceindicator) AS tx_adultpreviousattendanceindicator,
 		sb.tx_localstudentid,
 		sb.tx_studentid
-
-	FROM
+    FROM
 		{{ source('public', 'student_base')}} AS sb
     WHERE
 	    studentuniqueid IS NOT NULL

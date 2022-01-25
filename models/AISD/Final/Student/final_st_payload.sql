@@ -1,3 +1,8 @@
+{{ config(
+    materialized='table'
+    )
+}}
+
 WITH  final as (
 
 SELECT
@@ -5,9 +10,10 @@ SELECT
 	sb.externalid,
 	sb.resourcetype,
 	sb.operation,
+	CURRENT_TIME as modified_at,
 	json_build_object(
 		'studentUniqueId', sb.studentuniqueid,
-		'personReference', sb.personReference,
+		'identificationDocuments', sb.identificationdocuments,
 		'birthCity', sb.birthcity,
 		'birthCountryDescriptor', sb.birthcountrydescriptor,
 		'birthDate', sb.birthdate,
@@ -51,3 +57,9 @@ ON
 )
 
 select * from final
+{% if is_incremental() %}
+
+  -- this filter will only be applied on an incremental run
+  where modified_at > (select max(modified_at) from {{ this }})
+
+{% endif %}

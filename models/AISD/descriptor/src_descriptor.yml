@@ -5,6 +5,25 @@ sources:
     schema: dbt_test
     tables:
       - name: descriptor
-        description: Raw all descriptors
+        description: All descriptors
       - name: visadescriptor
-        description: Raw visa descriptor
+        description: Visa descriptor identifier
+      - name: identificationdocumentusedescriptor
+        description: Identification Document Use descriptor identifier
+      - name: personalinformationverificationdescriptor
+        description: Personal info verification descriptor identifier
+      - name: othernametypedescriptor
+        description: Other Name Type Descriptor identifier
+      - name: sourcesystemdescriptor
+        description: Source System Descriptor identifier
+      - name: countrydescriptor
+        description: Country Descriptor identifier
+      - name: sexdescriptor
+        description: Sex Descriptor identifier
+      - name: stateabbreviationdescriptor
+        description: State Abbreviation Descriptor identifier
+      - name: citizenshipstatusdescriptor
+        description: Citizenship Descriptor identifier
+
+
+
