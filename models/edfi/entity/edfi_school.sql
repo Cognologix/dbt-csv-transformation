@@ -24,9 +24,9 @@ WITH sc_base AS (
 		sb.tx_additionaldaysprogram AS txAdditionalDaysProgram,
 		sb.tx_numberofbullyingincidents AS txNumberOfBullyingIncidents,
 		sb.tx_numberofcyberbullyingincidentsc AS txNumberOfCyberbullyingIncidents,
-		sb.tx_pkfulldaywaiver AS txPKFullDayWaiver
+		case when sb.tx_pkfulldaywaiver = 'Y' then TRUE else FALSE end as txPKFullDayWaiver
 	FROM
-        public.school_base AS sb
+		public.school_base AS sb
 ),
 sc_education_organization_category AS (
 	SELECT
@@ -132,7 +132,7 @@ sc_identification_codes AS (
 				'educationOrganizationIdentificationSystemDescriptor', sic.educationorganizatio__ationsystemdescriptor,
 				'identificationCode', sic.identificationcode            
 			)
-        ) AS identificationCodes
+		) AS identificationCodes
 	FROM
 		public.school_identification_codes AS sic
 	GROUP BY 
@@ -268,6 +268,8 @@ elo_types AS (
 		elo_activities AS seo
 	ON
 		seo.schoolid = sset.schoolid
+	GROUP BY
+		sset.schoolid
 ),
 nslp_types AS
 (
