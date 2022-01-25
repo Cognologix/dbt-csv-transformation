@@ -1,19 +1,19 @@
 WITH st_crisis_events AS (
+
 	SELECT
 		sce.studentuniqueid,
-		jsonb_agg(json_build_object(
-				'txCrisisEventDescriptor', sce.tx_crisiseventdescriptor,
-				'txBeginDate', sce.tx_begindate,
-				'txEndDate', sce.tx_enddate
-			)
-		) AS crisisEvents
+		TRIM(sce.tx_crisiseventdescriptor) AS tx_crisiseventdescriptor,
+		sce.tx_begindate,
+		sce.tx_enddate
+
 	FROM
 		{{ source('public', 'student_crisis_events')}} AS sce
-	GROUP BY
-		sce.studentuniqueid
+	WHERE
+	    studentuniqueid IS NOT NULL AND
+	    NULLIF(TRIM(tx_crisiseventdescriptor),'') IS NOT NULL
 )
 
-select * from st_crisis_events;
+select * from st_crisis_events
 
 
 

@@ -1,17 +1,24 @@
+-- Apply lookup and other business transformations at this stage
 WITH sv as (
     select * from {{ref('raw_st_visas')}}
-    WHERE
-        sv.studentuniqueid IS NOT NULL
-	    AND sv.visadescriptor IS NOT NULL
+
 ),
+
+dv as (
+   select namespace, codevalue
+   from {{ref('src_descriptor')}} as d
+   JOIN {{ref('src_visadescriptor')}} as vd
+   on d.descriptorid = vd.visadescriptorid
+),
+
+-- Final Json block to be created after all validations and transformations are done
 final as (
    SELECT
-		TRIM(sv.studentuniqueid),
+		sv.studentuniqueid,
 		jsonb_agg(json_build_object(
-				'visaDescriptor', TRIM(sv.visadescriptor)
-				#visaDescriptor: uri://ed-fi.org/VisaDescriptor#other visa
-			)
-		)
+				'visaDescriptor', sv.visadescriptor
+
+			)) as visas
    FROM
 	    sv
 
@@ -22,4 +29,4 @@ final as (
 		sv.studentuniqueid
 )
 
-select * from final;
+select * from final

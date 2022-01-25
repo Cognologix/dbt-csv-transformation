@@ -1,22 +1,31 @@
+-- Apply lookup and other business transformations at this stage
 WITH son as (
-    select * from {{ref('raw_st_other_names')}}
-    WHERE
-	    son.studentuniqueid IS NOT NULL
-	    AND son.othernametypedescriptor IS NOT NULL
-	    AND son.firstname IS NOT NULL
-),
+
+    SELECT
+    	distinct studentuniqueid,
+		        othernametypedescriptor,
+		        firstname,
+		        generationcodesuffix,
+		        lastsurname,
+		        middlename,
+		        personaltitleprefix
+    from
+        {{ref('raw_st_other_names')}}
+
+ ),
+
+-- Final Json block to be created after all validations and transformations are done
 final as (
    SELECT
-		TRIM(son.studentuniqueid),
+		son.studentuniqueid,
 		jsonb_agg(json_build_object(
-				'otherNameTypeDescriptor', TRIM(son.othernametypedescriptor),
-				'firstName', TRIM(son.firstname),
-				'generationCodeSuffix', TRIM(son.generationcodesuffix),
-				'lastSurname', TRIM(son.lastsurname),
-				'middleName', TRIM(son.middlename),
-				'personalTitlePrefix', TRIM(son.personaltitleprefix)
-			)
-		)
+				'otherNameTypeDescriptor', son.othernametypedescriptor,
+				'firstName', son.firstname,
+				'generationCodeSuffix', son.generationcodesuffix,
+				'lastSurname', son.lastsurname,
+				'middleName', son.middlename,
+				'personalTitlePrefix', son.personaltitleprefix
+			)) AS otherNames
    FROM
 	    son
    GROUP BY
@@ -24,4 +33,4 @@ final as (
 
 )
 
-select * from final;
+select * from final

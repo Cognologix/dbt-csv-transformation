@@ -1,18 +1,18 @@
+-- Apply lookup and other business transformations at this stage
 WITH scbg as (
     select * from {{ref('raw_st_student_census_block_group')}}
-    WHERE
-	    scbg.studentuniqueid IS NOT NULL
-	    AND scbg.txstudentcensusblockgroup IS NOT NULL
+
 ),
+
+-- Final Json block to be created after all validations and transformations are done
 final as (
     SELECT
-		TRIM(scbg.studentuniqueid),
+		scbg.studentuniqueid,
 		jsonb_agg(json_build_object(
-				'txStudentCensusBlockGroup', TRIM(scbg.tx_studentcensusblockgroup),
-				'txBeginDate', TRIM(scbg.tx_begindate),
-				'txEndDate', TRIM(scbg.tx_enddate)
-				)
-			)
+				'txStudentCensusBlockGroup', scbg.tx_studentcensusblockgroup,
+				'txBeginDate', scbg.tx_begindate,
+				'txEndDate', scbg.tx_enddate
+				)) AS studentCensusBlockGroup
 	FROM
 		scbg
 	GROUP BY
@@ -20,4 +20,4 @@ final as (
 
 )
 
-select * from final;
+select * from final

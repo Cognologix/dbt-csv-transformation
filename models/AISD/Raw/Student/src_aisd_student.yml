@@ -1,20 +1,90 @@
 version: 2
 sources:
-  - name: AISD
+  - name: public
     database: aisd_poc
     schema: public
     tables:
       - name: student_base
         description: Raw Student Base data
+        columns:
+          - name: studentuniqueid
+            tests:
+              - not_null
+          - name: birthdate
+            tests:
+              - not_null
+          - name: firstname
+            tests:
+              - not_null
+          - name: lastsurname
+            tests:
+              - not_null
+
       - name: student_visas
         description: Raw Student other names data
+        columns:
+          - name: studentuniqueid
+            tests:
+              - not_null
+          - name: visadescriptor
+            tests:
+              - not_null
+
       - name: student_crisis_events
         description: Raw Student level crisis events data
+        columns:
+          - name: studentuniqueid
+            tests:
+              - not_null
+          - name: tx_crisiseventdescriptor
+            tests:
+              - not_null
+
       - name: student_identification_documents
-        description:
+        description: asasa
+        columns:
+          - name: studentuniqueid
+            tests:
+              - not_null
+          - name: identificationdocumentusedescriptor
+            tests:
+              - not_null
+          - name: personalinformationverificationdescriptor
+            tests:
+              - not_null
+
       - name: student_census_block_groups
-        description:
+        description: asas
+        columns:
+          - name: studentuniqueid
+            tests:
+              - not_null
+          - name: tx_studentcensusblockgroup
+            tests:
+              - not_null
+
       - name: student_other_names
-        description:
+        description: asa
+        columns:
+          - name: studentuniqueid
+            tests:
+              - not_null
+          - name: othernametypedescriptor
+            tests:
+              - not_null
+          - name: firstname
+            tests:
+              - not_null
+
       - name: student_personal_identification_documents
-        description:
+        description: asad
+        columns:
+          - name: studentuniqueid
+            tests:
+              - not_null
+          - name: identificationdocumentusedescriptor
+            tests:
+              - not_null
+          - name: personalinformationverificationdescriptor
+            tests:
+              - not_null

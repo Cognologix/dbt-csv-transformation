@@ -1,22 +1,23 @@
+-- Add lookup and other business validations at this stage
 WITH sce as (
-    select * from {{ref('raw_st_crisis_events')}}
-    WHERE
-	sce.studentuniqueid IS NOT NULL
-	AND sce.txcrisiseventdescriptor IS NOT NULL
+
+    SELECT * from {{ref('raw_st_crisis_events')}}
+
 ),
+
+-- Final Json block to be created after all validations and transformations are done
 final as (
     SELECT
-		TRIM(sce.studentuniqueid),
+		sce.studentuniqueid,
 		jsonb_agg(json_build_object(
-				'txCrisisEventDescriptor', TRIM(sce.tx_crisiseventdescriptor),
-				'txBeginDate', TRIM(sce.tx_begindate),
-				'txEndDate', TRIM(sce.tx_enddate)
-			)
-		)
+				'txCrisisEventDescriptor', sce.tx_crisiseventdescriptor,
+				'txBeginDate', sce.tx_begindate,
+				'txEndDate', sce.tx_enddate
+			)) as crisisEvents
 	FROM
-	    sce
-        GROUP BY
+	  sce
+    GROUP BY
 		sce.studentuniqueid
 )
 
-select * from final;
+select * from final

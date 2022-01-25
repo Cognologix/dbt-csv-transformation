@@ -1,23 +1,22 @@
+-- Apply lookup and other business transformations at this stage
 WITH spid as (
     select * from {{ref('raw_st_personal_identification_documents')}}
-    WHERE
-	    spid.studentuniqueid IS NOT NULL
-	    AND spid.identificationdocumentusedescriptor IS NOT NULL
-	    AND spid.personalinformationverificationdescriptor IS NOT NULL
+
 ),
+
+-- Final Json block to be created after all validations and transformations are done
 final as (
    SELECT
-		TRIM(spid.studentuniqueid),
+		spid.studentuniqueid,
         jsonb_agg(json_build_object(
-				'identificationDocumentUseDescriptor', TRIM(spid.identificationdocumentusedescriptor),
-				'personalInformationVerificationDescriptor', TRIM(spid.personalinformationverificationdescriptor),
-				'issuerCountryDescriptor', TRIM(spid.issuercountrydescriptor),
-				'documentExpirationDate', TRIM(spid.documentexpirationdate),
-				'documentTitle', TRIM(spid.documenttitle),
-				'issuerDocumentIdentificationCode', TRIM(spid.issuerdocumentidentificationcode),
-				'issuerName', TRIM(spid.issuername)
-			)
-		)
+				'identificationDocumentUseDescriptor', spid.identificationdocumentusedescriptor,
+				'personalInformationVerificationDescriptor', spid.personalinformationverificationdescriptor,
+				'issuerCountryDescriptor', spid.issuercountrydescriptor,
+				'documentExpirationDate', spid.documentexpirationdate,
+				'documentTitle', spid.documenttitle,
+				'issuerDocumentIdentificationCode', spid.issuerdocumentidentificationcode,
+				'issuerName', spid.issuername
+			)) AS personalIdentificationDocuments
 	FROM
 	    spid
 	GROUP BY
@@ -25,4 +24,4 @@ final as (
 
 )
 
-select * from final;
+select * from final

@@ -1,20 +1,20 @@
 WITH st_identification_documents AS (
 	SELECT
 		sid.studentuniqueid,
-		jsonb_agg(json_build_object(
-				'identificationDocumentUseDescriptor', sid.identificationdocumentusedescriptor,
-				'personalInformationVerificationDescriptor', sid.personalinformationverificationdescriptor,
-				'issuerCountryDescriptor', sid.issuercountrydescriptor,
-				'documentExpirationDate', sid.documentexpirationdate,
-				'documentTitle', sid.documenttitle,
-				'issuerDocumentIdentificationCode', sid.issuerdocumentidentificationcode,
-				'issuerName', sid.issuername
-			)
-		) AS identificationDocuments
+		TRIM(sid.identificationdocumentusedescriptor) AS identificationdocumentusedescriptor,
+		TRIM(sid.personalinformationverificationdescriptor) AS personalinformationverificationdescriptor,
+		TRIM(sid.issuercountrydescriptor) AS issuercountrydescriptor,
+		sid.documentexpirationdate,
+		TRIM(sid.documenttitle) AS documenttitle,
+		TRIM(sid.issuerdocumentidentificationcode) AS issuerdocumentidentificationcode,
+		TRIM(sid.issuername) AS issuername
+
 	FROM
 		{{ source('public', 'student_identification_documents')}} AS sid
-	GROUP BY
-		sid.studentuniqueid
+	WHERE
+	    studentuniqueid IS NOT NULL AND
+	    NULLIF(TRIM(identificationdocumentusedescriptor),'') IS NOT NULL AND
+	    NULLIF(TRIM(personalinformationverificationdescriptor),'') IS NOT NULL
 )
 
-select * from st_identification_documents;
+select * from st_identification_documents

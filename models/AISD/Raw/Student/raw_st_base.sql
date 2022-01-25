@@ -1,39 +1,34 @@
 WITH st_base AS (
 	SELECT
 		sb.studentuniqueid,
-		uuid_generate_v4() AS resourceid,
-		json_build_object(
-			'studentuniqueid', sb.studentuniqueid
-		)AS externalid,
-		'STUDENT' AS resourcetype,
 		sb.operation,
-		0 AS status,
-		json_build_object(
-			'personId', sb.studentuniqueid,
-			'sourceSystemDescriptor', sb.sourcesystemdescriptor
-		) AS identificationDocuments,
-		sb.birthcity,
-		sb.birthcountrydescriptor,
+		TRIM(sb.sourcesystemdescriptor) AS sourcesystemdescriptor,
+		TRIM(sb.birthcity) AS birthcity,
+		TRIM(sb.birthcountrydescriptor) AS birthcountrydescriptor,
 		sb.birthdate,
-		sb.birthinternationalprovince,
-		sb.birthsexdescriptor,
-		sb.birthstateabbreviationdescriptor,
-		sb.citizenshipstatusdescriptor,
-		sb.dateenteredus,
-		sb.firstname,
-		sb.generationcodesuffix,
-		sb.lastsurname,
-		sb.maidenname,
-		sb.middlename,
-		sb.multiplebirthstatus,
-		sb.personaltitleprefix,
-		sb.tx_adultpreviousattendanceindicator,
+		TRIM(sb.birthinternationalprovince) AS birthinternationalprovince,
+		TRIM(sb.birthsexdescriptor) AS birthsexdescriptor,
+		TRIM(sb.birthstateabbreviationdescriptor) AS birthstateabbreviationdescriptor,
+		TRIM(sb.citizenshipstatusdescriptor) AS citizenshipstatusdescriptor,
+		TRIM(sb.dateenteredus) AS dateenteredus,
+		TRIM(sb.firstname) AS firstname,
+		TRIM(sb.generationcodesuffix) AS generationcodesuffix,
+		TRIM(sb.lastsurname) AS lastsurname,
+		TRIM(sb.maidenname) AS maidenname,
+		TRIM(sb.middlename) AS middlename,
+		TRIM(sb.multiplebirthstatus) AS multiplebirthstatus,
+		TRIM(sb.personaltitleprefix) AS personaltitleprefix,
+		TRIM(sb.tx_adultpreviousattendanceindicator) AS tx_adultpreviousattendanceindicator,
 		sb.tx_localstudentid,
 		sb.tx_studentid
 
 	FROM
 		{{ source('public', 'student_base')}} AS sb
-
+    WHERE
+	    studentuniqueid IS NOT NULL
+	    AND birthdate IS NOT NULL
+	    AND NULLIF(TRIM(firstname),'') IS NOT NULL
+	    AND NULLIF(TRIM(lastsurname),'') IS NOT NULL
 )
 
-select * from st_base;
+select * from st_base

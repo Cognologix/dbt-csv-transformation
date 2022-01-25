@@ -1,30 +1,30 @@
+-- Add lookup and other business validations at this stage
 WITH sid as (
+
     select * from {{ref('raw_st_identification_documents')}}
-    WHERE
-	    sid.studentuniqueid IS NOT NULL
-	    AND sid.identificationdocumentusedescriptor IS NOT NULL
-	    AND sid.personalinformationverificationdescriptor IS NOT NULL
-)
+
 ),
+
+-- Final Json block to be created after all validations and transformations are done
 final as (
     SELECT
-		TRIM(sid.studentuniqueid),
+		sid.studentuniqueid,
 		jsonb_agg(json_build_object(
-				'identificationDocumentUseDescriptor', TRIM(sid.identificationdocumentusedescriptor),
-				'personalInformationVerificationDescriptor', TRIM(sid.personalinformationverificationdescriptor),
-				'issuerCountryDescriptor', TRIM(sid.issuercountrydescriptor),
-				'documentExpirationDate', TRIM(sid.documentexpirationdate),
-				'documentTitle', TRIM(sid.documenttitle),
-				'issuerDocumentIdentificationCode', TRIM(sid.issuerdocumentidentificationcode),
-				'issuerName', TRIM(sid.issuername)
-			)
-		)
+				'identificationDocumentUseDescriptor', sid.identificationdocumentusedescriptor,
+				'personalInformationVerificationDescriptor', sid.personalinformationverificationdescriptor,
+				'issuerCountryDescriptor', sid.issuercountrydescriptor,
+				'documentExpirationDate', sid.documentexpirationdate,
+				'documentTitle', sid.documenttitle,
+				'issuerDocumentIdentificationCode', sid.issuerdocumentidentificationcode,
+				'issuerName', sid.issuername
+			)) AS identificationDocuments
 	FROM
 	  sid
 	GROUP BY
 		sid.studentuniqueid
 
+
 )
 
 
-select * from final;
+select * from final

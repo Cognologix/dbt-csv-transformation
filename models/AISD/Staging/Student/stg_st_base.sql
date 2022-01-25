@@ -1,42 +1,40 @@
+-- Add lookup and other business validations at this stage
 WITH sb as (
     select * from {{ref('raw_st_base')}}
-    WHERE
-	    sb.studentuniqueid IS NOT NULL
-	    AND sb.birthdate IS NOT NULL
-	    AND sb.firstname IS NOT NULL
-	    AND sb.lastsurname IS NOT NULL
+
 ),
 
+-- Final Json block to be created after all validations and transformations are done
 final as (
     SELECT
-		TRIM(sb.studentuniqueid,
+		sb.studentuniqueid,
 		uuid_generate_v4() AS resourceid,
 		json_build_object(
-			'studentuniqueid', TRIM(sb.studentuniqueid)
-		)AS externalid,
+			'studentuniqueid', sb.studentuniqueid
+		) AS externalid,
 		'STUDENT' AS resourcetype,
-		TRIM(sb.operation),
+		TRIM(sb.operation) AS operation,
 		0 AS status,
 		json_build_object(
-			'personId', TRIM(sb.studentuniqueid),
-			'sourceSystemDescriptor', TRIM(sb.sourcesystemdescriptor)
-		) AS identificationDocuments,
-		TRIM(sb.birthcity),
-		TRIM(sb.birthcountrydescriptor),
-		TRIM(sb.birthdate),
-		TRIM(sb.birthinternationalprovince),
-		TRIM(sb.birthsexdescriptor),
-		TRIM(sb.birthstateabbreviationdescriptor),
-		TRIM(sb.citizenshipstatusdescriptor),
-		TRIM(sb.dateenteredus),
-		TRIM(sb.firstname),
-		TRIM(sb.generationcodesuffix),
-		TRIM(sb.lastsurname),
-		TRIM(sb.maidenname),
-		TRIM(sb.middlename),
-		TRIM(sb.multiplebirthstatus),
-		TRIM(sb.personaltitleprefix),
-		TRIM(sb.tx_adultpreviousattendanceindicator),
+			'personId', sb.studentuniqueid,
+			'sourceSystemDescriptor', sb.sourcesystemdescriptor
+		) AS personReference,
+		sb.birthcity,
+		sb.birthcountrydescriptor,
+		sb.birthdate,
+		sb.birthinternationalprovince,
+		sb.birthsexdescriptor,
+		sb.birthstateabbreviationdescriptor,
+		sb.citizenshipstatusdescriptor,
+		sb.dateenteredus,
+		sb.firstname,
+		sb.generationcodesuffix,
+		sb.lastsurname,
+		sb.maidenname,
+		sb.middlename,
+		sb.multiplebirthstatus,
+		sb.personaltitleprefix,
+		sb.tx_adultpreviousattendanceindicator,
 		sb.tx_localstudentid,
 		sb.tx_studentid
 
@@ -45,4 +43,4 @@ final as (
 
 )
 
-select * from final;
+select * from final
