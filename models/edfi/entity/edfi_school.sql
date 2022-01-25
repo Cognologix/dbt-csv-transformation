@@ -322,7 +322,7 @@ extensions AS
 				'txPKFullDayWaiver', sb.txPKFullDayWaiver,
 				'campusEnrollmentTypes', scet.campusEnrollmentTypes,
 				'charterWaitlists', scw.charterWaitlists,
-				'seo.eloTypes', seo.eloTypes,
+				'eloTypes', seo.eloTypes,
 				'nslpTypes', snt.nslpTypes,
 				'TPDM', sipsir.TPDM
 			) 
