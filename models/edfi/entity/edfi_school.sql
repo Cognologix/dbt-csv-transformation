@@ -255,11 +255,12 @@ elo_activities AS
 elo_types AS (
 	SELECT
 		sset.schoolid,
-		json_build_object(
-			'txELOTypeDescriptor', sset.tx_elotypedescriptor,
-			'txBeginDate', sset.tx_begindate,
-			'txEndDate', sset.tx_enddate,
-			'eloActivities', seo. eloActivities
+		jsonb_agg(json_build_object (
+				'txELOTypeDescriptor', sset.tx_elotypedescriptor,
+				'txBeginDate', sset.tx_begindate,
+				'txEndDate', sset.tx_enddate,
+				'eloActivities', seo. eloActivities
+			)
 		) AS eloTypes
 	FROM
 		public.school_elo_types AS sset
@@ -271,13 +272,13 @@ elo_types AS (
 nslp_types AS
 (
 	SELECT
-	snt.schoolid,
-	jsonb_agg(json_build_object (
-			'txNSLPTypeDescriptor', snt.tx_nslptypedescriptor,
-			'txBeginDate', snt.tx_begindate,
-			'txEndDate', snt.tx_enddate
-		)
-	) AS nslpTypes
+		snt.schoolid,
+		jsonb_agg(json_build_object (
+				'txNSLPTypeDescriptor', snt.tx_nslptypedescriptor,
+				'txBeginDate', snt.tx_begindate,
+				'txEndDate', snt.tx_enddate
+			)
+		) AS nslpTypes
 	FROM
 		public.school_nslp_types AS snt
 	GROUP BY
