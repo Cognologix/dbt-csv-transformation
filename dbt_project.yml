@@ -52,5 +52,11 @@ models:
         SSA:
           materialized: 'table'
       Staging:
-        student:
-          +materialized: table
+        Student:
+          materialized: 'table'
+        School:
+          materialized: 'table'
+        Calendar:
+          materialized: 'table'
+        SSA:
+          materialized: 'table'
