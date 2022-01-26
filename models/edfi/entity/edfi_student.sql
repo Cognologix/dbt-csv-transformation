@@ -1,17 +1,17 @@
 WITH st_base AS (
 	SELECT
-		sb.studentuniqueid,
+		CAST( sb.studentuniqueid AS TEXT ) AS studentuniqueid,
 		uuid_generate_v4() AS resourceid, 
 		json_build_object(
-			'studentuniqueid', sb.studentuniqueid
+			'studentuniqueid', CAST( sb.studentuniqueid AS TEXT )
 		)AS externalid,
 		'STUDENT' AS resourcetype,
 		sb.operation,
 		0 AS status,
 		json_build_object(
-			'personId', sb.studentuniqueid,
+			'personId', CAST( sb.personid AS TEXT ),
 			'sourceSystemDescriptor', sb.sourcesystemdescriptor
-		) AS identificationDocuments,
+		) AS personReference,
 		sb.birthcity,
 		sb.birthcountrydescriptor,
 		sb.birthdate,
@@ -131,7 +131,7 @@ crisis_events AS (
 extensions AS
 (
 	SELECT 
-		sb.studentuniqueid,
+		CAST( sb.studentuniqueid AS TEXT ),
 		json_build_object(
 			'TexasExtensions',
 			json_build_object(
@@ -147,11 +147,11 @@ extensions AS
 	LEFT JOIN 
 		census_block_groups As scbg
 	ON
-		scbg.studentuniqueid = sb.studentuniqueid
+		CAST ( scbg.studentuniqueid AS TEXT ) = CAST( sb.studentuniqueid AS TEXT )
 	LEFT JOIN 
 		crisis_events As sce
 	ON
-		sce.studentuniqueid = sb.studentuniqueid
+		CAST ( sce.studentuniqueid AS TEXT ) = CAST( sb.studentuniqueid AS TEXT )
 )
 
 SELECT
@@ -160,8 +160,8 @@ SELECT
 	resourcetype,
 	operation,
 	json_build_object(
-		'studentUniqueId', sb.studentuniqueid,
-		'identificationDocuments', sb.identificationdocuments,
+		'studentUniqueId', CAST( sb.studentuniqueid AS TEXT ),
+		'personReference', sb.personReference,
 		'birthCity', sb.birthcity,
 		'birthCountryDescriptor', sb.birthcountrydescriptor,
 		'birthDate', sb.birthdate,
@@ -189,20 +189,20 @@ FROM
 LEFT OUTER JOIN
 	st_identification_documents AS sid
 ON 
-	sid.studentuniqueid = sb.studentuniqueid
+	CAST ( sid.studentuniqueid AS TEXT) = CAST( sb.studentuniqueid AS TEXT )
 LEFT OUTER JOIN
 	st_other_names AS son
 ON 
-	son.studentuniqueid = sb.studentuniqueid
+	CAST ( son.studentuniqueid AS TEXT ) = CAST( sb.studentuniqueid AS TEXT )
 LEFT OUTER JOIN
 	st_personal_identification_documents AS spid
 ON 
-	spid.studentuniqueid = sb.studentuniqueid
+	CAST ( spid.studentuniqueid AS TEXT ) = CAST( sb.studentuniqueid AS TEXT )
 LEFT OUTER JOIN
 	st_visas AS sv
 ON 
-	sv.studentuniqueid = sb.studentuniqueid
+	CAST ( sv.studentuniqueid AS TEXT ) = CAST( sb.studentuniqueid AS TEXT )
 LEFT OUTER JOIN
 	extensions
 ON
-	extensions.studentuniqueid = sb.studentuniqueid
+	CAST ( extensions.studentuniqueid AS TEXT ) = CAST( sb.studentuniqueid AS TEXT )
