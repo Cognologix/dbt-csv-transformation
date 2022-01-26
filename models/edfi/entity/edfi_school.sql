@@ -326,9 +326,9 @@ extensions AS
 				'campusEnrollmentTypes', scet.campusEnrollmentTypes,
 				'charterWaitlists', scw.charterWaitlists,
 				'eloTypes', seo.eloTypes,
-				'nslpTypes', snt.nslpTypes,
-				'TPDM', sipsir.TPDM
-			) 
+				'nslpTypes', snt.nslpTypes
+			),
+			'TPDM', sipsir.TPDM 
 		)
 		AS _ext
 	FROM 
