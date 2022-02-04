@@ -57,7 +57,7 @@ spid as (
     spid.issuerdocumentidentificationcode,
     spid.issuername
 
-    from {{ref('raw_st_personal_identification_documents')}} as spid
+    from {{ref('cl_st_personal_identification_documents')}} as spid
 
     left outer join idudm
     on spid.identificationdocumentusedescriptor = idudm.codevalue

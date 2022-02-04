@@ -1,0 +1,55 @@
+version: 2
+sources:
+  - name: public
+    database: aisd_poc
+    schema: dbt
+    tables:
+      - name: ssa_base
+        description: Cleansing SSA Base data
+        columns:
+          - name: studentuniqueid
+            tests:
+              - not_null
+          - name: schoolid
+            tests:
+                - not_null
+          - name: entrydate
+            tests:
+              - not_null
+          - name: entrygradeleveldescriptor
+            tests:
+              - not_null
+
+
+      - name: ssa_alternate_graduation_plan_reference
+        description: Cleansing SSA alternate graduation plan reference data
+        columns:
+          - name: studentuniqueid
+            tests:
+              - not_null
+          - name: schoolid
+            tests:
+              - not_null
+          - name: agpr_educationorganizationid
+            tests:
+              - not_null
+          - name: agpr_graduationplantypedescriptor
+            tests:
+              - not_null
+          - name: agpr_graduationschoolyear
+            tests:
+              - not_null
+
+      - name: ssa_education_plans
+        description: Cleansing SSA education plans data
+        columns:
+          - name: studentuniqueid
+            tests:
+              - not_null
+          - name: schoolid
+            tests:
+              - not_null
+          - name: educationplans_educationplandescriptor
+            tests:
+              - not_null
+

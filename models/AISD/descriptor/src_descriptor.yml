@@ -2,7 +2,7 @@ version: 2
 sources:
   - name: dbt_test
     database: aisd_poc
-    schema: dbt_test
+    schema: innive_aisd_meta_data_pt
     tables:
       - name: descriptor
         description: All descriptors
@@ -24,6 +24,73 @@ sources:
         description: State Abbreviation Descriptor identifier
       - name: citizenshipstatusdescriptor
         description: Citizenship Descriptor identifier
+      - name: calendartypedescriptor
+        description: Calendar Type Descriptor identifier
+      - name: addresstypedescriptor
+        description: Address Type Descriptor identifier
+      - name: localedescriptor
+        description: Locale Descriptor identifier
+      - name: tx_campusenrollmenttypedescriptor
+        description: TX_campus Enrollment Type Descriptor identifier
+      - name: schoolcategorydescriptor
+        description: School Category Descriptor identifier
+      - name: educationorganizationcategorydescriptor
+        description: education organization category Descriptor identifier
+      - name: tx_eloactivitydescriptor
+        description: TX_ELO Activity Descriptor identifier
+      - name: tx_elotypedescriptor
+        description: TX_ELO Type Descriptor identifier
+      - name: gradeleveldescriptor
+        description: Grade Level Descriptor identifier
+      - name: eo_identificationsystemdescriptor
+        description: Education Organization Identification System Descriptor identifier
+      - name: indicatordescriptor
+        description: Indicator Descriptor identifier
+      - name: indicatorgroupdescriptor
+        description: Indicator Group Descriptor identifier
+      - name: indicatorleveldescriptor
+        description: Indicator Level Descriptor identifier
+      - name: institutiontelephonenumbertypedescriptor
+        description: Institution Telephone Number Type Descriptor identifier
+      - name: tx_nslptypedescriptor
+        description: TX_NSLP Type Descriptor identifier
+      - name: agpr_graduationplantypedescriptor
+        description: Alternative Graduation Plan Type Descriptor identifier
+      - name: entrygradeleveldescriptor
+        description: entrygradeleveldescriptor identifier
+      - name: entrygradelevelreasondescriptor
+        description: entrygradelevelreasondescriptor identifier
+      - name: entrytypedescriptor
+        description: entrytypedescriptor identifier
+      - name: exitwithdrawtypedescriptor
+        description: exitwithdrawtypedescriptor identifier
+      - name: residencystatusdescriptor
+        description: residencystatusdescriptor identifier
+      - name: tx_adaeligibilitydescriptor
+        description: tx_adaeligibilitydescriptor identifier
+      - name: tx_studentattributiondescriptor
+        description: tx_studentattributiondescriptor identifier
+      - name: administrativefundingcontroldescriptor
+        description: Administrative Funding Control Descriptor identifier
+      - name: charterstatusdescriptor
+        description: Charter Status Descriptor identifier
+      - name: charterapprovalagencytypedescriptor
+        description: Charter Approval Agency Type Descriptor identifier
+      - name: internetaccessdescriptor
+        description: Internet Access Descriptor identifier
+      - name: magnetspecialprogramemphasisschooldescriptor
+        description: Magnet Special Program Emphasis School Descriptor identifier
+      - name: operationalstatusdescriptor
+        description: Operational Status Descriptor identifier
+      - name: schooltypedescriptor
+        description: School type Descriptor identifier
+      - name: titleipartaschooldesignationdescriptor
+        description: Title I Part A School Designation Descriptor identifier
+      - name: graduationplantypedescriptor
+        description: graduationplantypedescriptor identifier
+      - name: educationplandescriptor
+        description: Education Plan Descriptor identifier
+
 
 
 

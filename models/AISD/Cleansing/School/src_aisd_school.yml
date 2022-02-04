@@ -1,0 +1,176 @@
+version: 2
+sources:
+  - name: public
+    database: aisd_poc
+    schema: dbt
+    tables:
+      - name: school_base
+        description: Cleansing School Base data
+        columns:
+          - name: schoolid
+            tests:
+              - not_null
+          - name: nameofinstitution
+            tests:
+              - not_null
+
+      - name: school_addresses
+        description: Cleansing School address data
+        columns:
+          - name: schoolid
+            tests:
+              - not_null
+          - name: addresstypedescriptor
+            tests:
+              - not_null
+          - name: stateabbreviationdescriptor
+            tests:
+              - not_null
+          - name: city
+            tests:
+              - not_null
+          - name: postalcode
+            tests:
+              - not_null
+          - name: streetnumbername
+            tests:
+              - not_null
+
+      - name: school_campus_enrollment_types
+        description: Cleansing School campus enrollment types data
+        columns:
+          - name: schoolid
+            tests:
+              - not_null
+          - name: tx_campusenrollmenttypedescriptor
+            tests:
+              - not_null
+
+      - name: school_categories
+        description: Cleansing School categorirs data
+        columns:
+          - name: schoolid
+            tests:
+              - not_null
+          - name: schoolcategorydescriptor
+            tests:
+              - not_null
+
+      - name: school_charter_waitlist
+        description: Cleansing School charter waitlist data
+        columns:
+          - name: schoolid
+            tests:
+              - not_null
+
+      - name: school_education_organization_category
+        description: Cleansing School education organization categories data
+        columns:
+          - name: schoolid
+            tests:
+              - not_null
+          - name: educationorganizationcategorydescriptor
+            tests:
+              - not_null
+
+      - name: school_elo_activities
+        description: Cleansing School elo activities data
+        columns:
+          - name: schoolid
+            tests:
+              - not_null
+          - name: tx_eloactivitydescriptor
+            tests:
+              - not_null
+
+      - name: school_elo_types
+        description: Cleansing School elo types data
+        columns:
+          - name: schoolid
+            tests:
+              - not_null
+          - name: tx_elotypeDescriptor
+            tests:
+              - not_null
+
+      - name: school_gradelevels
+        description: Cleansing School grade levels data
+        columns:
+            - name: schoolid
+              tests:
+                - not_null
+            - name: gradeleveldescriptor
+              tests:
+                - not_null
+
+      - name: school_identification_codes
+        description: Cleansing School identification codes data
+        columns:
+            - name: schoolid
+              tests:
+                - not_null
+            - name: eo_identificationsystemdescriptor
+              tests:
+                - not_null
+            - name: identificationcode
+              tests:
+                - not_null
+
+      - name: school_indicators
+        description: Cleansing School indicators data
+        columns:
+            - name: schoolid
+              tests:
+                - not_null
+            - name: indicatordescriptor
+              tests:
+                - not_null
+
+      - name: school_institution_telephones
+        description: Cleansing School institution telephones data
+        columns:
+            - name: schoolid
+              tests:
+                - not_null
+            - name: institutiontelephonenumbertypedescriptor
+              tests:
+                - not_null
+            - name: telephonenumber
+              tests:
+                - not_null
+
+      - name: school_international_addresses
+        description: Cleansing School institution telephones data
+        columns:
+            - name: schoolid
+              tests:
+                - not_null
+            - name: addresstypedescriptor
+              tests:
+                - not_null
+            - name: countrydescriptor
+              tests:
+                - not_null
+            - name: addressline1
+              tests:
+                - not_null
+
+      - name: school_nslp_types
+        description: Cleansing School NSLP types data
+        columns:
+            - name: schoolid
+              tests:
+                - not_null
+            - name: tx_nslptypedescriptor
+              tests:
+                - not_null
+
+      - name: school_post_secondary_institution_reference
+        description: Cleansing School post secondary institution reference data
+        columns:
+            - name: schoolid
+              tests:
+                - not_null
+            - name: postSecondaryInstitutionId
+              tests:
+                - not_null

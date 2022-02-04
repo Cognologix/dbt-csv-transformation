@@ -33,7 +33,7 @@ son as (
 		middlename,
 		personaltitleprefix
     from
-        {{ref('raw_st_other_names')}}
+        {{ref('cl_st_other_names')}}
     left outer join ondm
     on othernametypedescriptor = ondm.codevalue
 

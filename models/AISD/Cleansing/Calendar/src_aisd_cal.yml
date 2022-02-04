@@ -1,0 +1,22 @@
+version: 2
+sources:
+  - name: public
+    database: aisd_poc
+    schema: dbt
+    tables:
+      - name: calendar_base
+        description: Cleansing calendar Base data
+        columns:
+          - name: calendarcode
+            tests:
+              - not_null
+          - name: schoolid
+            tests:
+                - not_null
+          - name: schoolyear
+            tests:
+              - not_null
+          - name: calendartypedescriptor
+            tests:
+              - not_null
+

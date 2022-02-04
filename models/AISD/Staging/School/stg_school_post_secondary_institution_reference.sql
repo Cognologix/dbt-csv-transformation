@@ -5,7 +5,7 @@ WITH sc_psir as (
     	distinct schoolid,
 		        postSecondaryInstitutionId
     from
-        {{ref('raw_school_post_secondary_institution_reference')}}
+        {{ref('cl_school_post_secondary_institution_reference')}}
 
  ),
 

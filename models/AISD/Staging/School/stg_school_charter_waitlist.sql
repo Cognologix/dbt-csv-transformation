@@ -9,7 +9,7 @@ WITH sc_charter_waitlist as (
 		        tx_begindate,
 		        tx_enddate
     from
-        {{ref('raw_school_charter_waitlist')}}
+        {{ref('cl_school_charter_waitlist')}}
 
  ),
 

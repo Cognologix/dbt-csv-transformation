@@ -25,7 +25,7 @@ svcl as (
 
 	END as visadescriptor
 
-    from {{ref('raw_st_visas')}} as sv
+    from {{ref('cl_st_visas')}} as sv
     left outer join vdm
     on sv.visadescriptor = vdm.codevalue
 ),

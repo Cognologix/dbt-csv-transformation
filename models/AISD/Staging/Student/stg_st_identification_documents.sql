@@ -16,7 +16,7 @@ pivdm as (
 sid as (
 
     SELECT
-        -- * from {{ref('raw_st_identification_documents')}}
+        -- * from {{ref('cl_st_identification_documents')}}
     studentuniqueid,
     -- lookup identification document use descriptor
     CASE
@@ -58,7 +58,7 @@ sid as (
     spid.issuerdocumentidentificationcode,
     spid.issuername
 
-    from {{ref('raw_st_identification_documents')}} as spid
+    from {{ref('cl_st_identification_documents')}} as spid
 
     left outer join idudm
     on spid.identificationdocumentusedescriptor = idudm.codevalue

@@ -1,7 +1,7 @@
 -- Add lookup and other business validations at this stage
 WITH sce as (
 
-    SELECT * from {{ref('raw_st_crisis_events')}}
+    SELECT * from {{ref('cl_st_crisis_events')}}
 
 ),
 

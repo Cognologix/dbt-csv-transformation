@@ -1,6 +1,6 @@
 -- Apply lookup and other business transformations at this stage
 WITH scbg as (
-    select * from {{ref('raw_st_student_census_block_group')}}
+    select * from {{ref('cl_st_student_census_block_group')}}
 
 ),
 

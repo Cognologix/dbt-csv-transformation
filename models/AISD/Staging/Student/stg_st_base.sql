@@ -1,4 +1,6 @@
--- Add lookup and other business validations at this stage
+------------------------------------------------------------------------------
+-- Fetch Source System Descriptor Values in temp table for look-up validations
+------------------------------------------------------------------------------
 WITH ssdm as (
    select namespace, codevalue
    from {{ref('src_descriptor')}} as d
@@ -6,6 +8,9 @@ WITH ssdm as (
    on d.descriptorid = ssd.sourcesystemdescriptorid
 ),
 
+------------------------------------------------------------------------------
+-- Fetch Country Descriptor Values in temp table for look-up validations
+------------------------------------------------------------------------------
 bcdm as (
    select namespace, codevalue
    from {{ref('src_descriptor')}} as d
@@ -13,6 +18,9 @@ bcdm as (
    on d.descriptorid = bcd.countrydescriptorid
 ),
 
+------------------------------------------------------------------------------
+-- Fetch Sex Descriptor Values in temp table for look-up validations
+------------------------------------------------------------------------------
 bsdm as (
    select namespace, codevalue
    from {{ref('src_descriptor')}} as d
@@ -20,6 +28,9 @@ bsdm as (
    on d.descriptorid = bsd.sexdescriptorid
 ),
 
+------------------------------------------------------------------------------
+-- Fetch State Code Descriptor Values in temp table for look-up validations
+------------------------------------------------------------------------------
 bsadm as (
    select namespace, codevalue
    from {{ref('src_descriptor')}} as d
@@ -27,6 +38,9 @@ bsadm as (
    on d.descriptorid = bsad.stateabbreviationdescriptorid
 ),
 
+------------------------------------------------------------------------------
+-- Fetch Citizenship Status Descriptor Values in temp table for look-up validations
+------------------------------------------------------------------------------
 csdm as (
    select namespace, codevalue
    from {{ref('src_descriptor')}} as d
@@ -34,9 +48,11 @@ csdm as (
    on d.descriptorid = csd.citizenshipstatusdescriptorid
 ),
 
+------------------------------------------------------------------------------
+-- Add lookup and other business validations at this stage
+------------------------------------------------------------------------------
 sb as (
     select
-    -- * from {{ref('raw_st_base')}}
         studentuniqueid,
         operation,
 
@@ -54,7 +70,7 @@ sb as (
         else concat(ssdm.namespace, '#', ssdm.codevalue)
 
         END as sourcesystemdescriptor,
-
+        ----------------------
 		birthcity,
         ----------------------
         CASE
@@ -71,7 +87,6 @@ sb as (
         else concat(bcdm.namespace, '#', bcdm.codevalue)
 
         END as birthcountrydescriptor,
-        ----------------------
         ----------------------
 		birthdate,
 		birthinternationalprovince,
@@ -122,7 +137,7 @@ sb as (
         else concat(csdm.namespace, '#', csdm.codevalue)
 
         END as citizenshipstatusdescriptor,
-
+        ----------------------
 		sb.dateenteredus,
 		sb.firstname,
 		sb.generationcodesuffix,
@@ -136,7 +151,7 @@ sb as (
 		sb.tx_studentid
 
     FROM
-        {{ref('raw_st_base')}} sb
+        {{ref('cl_st_base')}} sb
     left outer join ssdm
         on sourcesystemdescriptor = ssdm.codevalue
     left outer join bcdm
@@ -148,10 +163,11 @@ sb as (
     left outer join csdm
         on citizenshipstatusdescriptor = csdm.codevalue
 
-
 ),
 
+------------------------------------------------------------------------------
 -- Final Json block to be created after all validations and transformations are done
+------------------------------------------------------------------------------
 final as (
     SELECT
 		sb.studentuniqueid,
@@ -165,7 +181,7 @@ final as (
 		json_build_object(
 			'personId', sb.studentuniqueid,
 			'sourceSystemDescriptor', sb.sourcesystemdescriptor
-		) AS identificationDocuments,
+		) AS personReference,
 		sb.birthcity,
 		sb.birthcountrydescriptor,
 		sb.birthdate,
