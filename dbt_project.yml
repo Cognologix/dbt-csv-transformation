@@ -2,12 +2,12 @@
 # Name your project! Project names should contain only lowercase characters
 # and underscores. A good package name should reflect your organization's
 # name or the intended use of these models
-name: 'dbt_csv_transformation'
+name: 'new_dbt'
 version: '1.0.0'
 config-version: 2
 
 # This setting configures which "profile" dbt uses for this project.
-profile: 'dbt_csv_transformation'
+profile: 'new_dbt'
 
 # These configurations specify where dbt should look for different types of files.
 # The `model-paths` config, for example, states that models in this project can be
@@ -28,12 +28,15 @@ clean-targets:         # directories to be removed by `dbt clean`
 # Configuring models
 # Full documentation: https://docs.getdbt.com/docs/configuring-models
 
-# Configuring models
+# In this example config, we tell dbt to build all models in the example/ directory
+# as tables. These settings can be overridden in the individual model files
+# using the `{{ config(...) }}` macro.
 models:
-  dbt_csv_transformation:
-    # Applies to all files under models/marts/core/
+  new_dbt:
+    # Config indicated by + and applies to all files under models/example/
     AISD:
-      Final:
+       Resource:
+        +schema: resource_data
         Student:
           materialized: 'table'
         School:
@@ -42,16 +45,31 @@ models:
           materialized: 'table'
         SSA:
           materialized: 'table'
-      Raw:
+      Cleansing:
+        +schema: staging_data
         Student:
-          materialized: 'table'
+          materialized: 'view'
         School:
-          materialized: 'table'
+          materialized: 'view'
         Calendar:
-          materialized: 'table'
+          materialized: 'view'
         SSA:
-          materialized: 'table'
+          materialized: 'view'
       Staging:
+        +schema: staging_data
+        Student:
+          materialized: 'view'
+        School:
+          materialized: 'view'
+        Calendar:
+          materialized: 'view'
+        SSA:
+          materialized: 'view'
+      Descriptor:
+        +schema: meta_data
+        materialized: 'view'
+      Error:
+        +schema: error_data
         Student:
           materialized: 'table'
         School:
@@ -60,3 +78,6 @@ models:
           materialized: 'table'
         SSA:
           materialized: 'table'
+
+
+

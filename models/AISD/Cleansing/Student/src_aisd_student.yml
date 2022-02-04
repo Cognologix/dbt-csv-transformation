@@ -2,7 +2,7 @@ version: 2
 sources:
   - name: public
     database: aisd_poc
-    schema: dbt
+    schema: public
     tables:
       - name: student_base
         description: Raw Student Base data

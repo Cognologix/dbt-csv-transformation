@@ -2,7 +2,7 @@ version: 2
 sources:
   - name: public
     database: aisd_poc
-    schema: dbt
+    schema: public
     tables:
       - name: school_base
         description: Cleansing School Base data

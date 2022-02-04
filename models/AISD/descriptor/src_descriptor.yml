@@ -2,7 +2,7 @@ version: 2
 sources:
   - name: dbt_test
     database: aisd_poc
-    schema: innive_aisd_meta_data_pt
+    schema: innive_aisd_meta_data
     tables:
       - name: descriptor
         description: All descriptors
