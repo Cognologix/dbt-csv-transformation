@@ -1,8 +1,9 @@
 WITH sc_identification_codes AS (
 
 	SELECT
+	    {{ var('LOADID',-1) }} as LOADID,
 		schoolid,
-		NULLIF(TRIM(eo_identificationsystemdescriptor),'') AS eo_identificationsystemdescriptor,
+		NULLIF(TRIM(educationorganizatio__ationsystemdescriptor),'') AS educationorganizatio__ationsystemdescriptor,
 		NULLIF(TRIM(identificationcode),'') AS identificationcode
 
 
@@ -11,7 +12,7 @@ WITH sc_identification_codes AS (
 
 	WHERE
 	    schoolid IS NOT NULL AND
-	    NULLIF(TRIM(eo_identificationsystemdescriptor),'') IS NOT NULL AND
+	    NULLIF(TRIM(educationorganizatio__ationsystemdescriptor),'') IS NOT NULL AND
 	    NULLIF(TRIM(identificationcode),'') IS NOT NULL
 
 )

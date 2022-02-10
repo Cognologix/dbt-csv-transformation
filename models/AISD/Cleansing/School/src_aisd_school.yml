@@ -1,8 +1,8 @@
 version: 2
 sources:
   - name: public
-    database: aisd_poc
-    schema: public
+    database: "{{ var('DB_NAME','aisd_poc') }}"
+    schema: "{{ var('DB_SOURCE_SCHEMA','dbt') }}"
     tables:
       - name: school_base
         description: Cleansing School Base data
@@ -62,6 +62,12 @@ sources:
           - name: schoolid
             tests:
               - not_null
+          - name: tx_begindate
+            tests:
+              - not_null
+          - name: tx_enddate
+            tests:
+              - not_null
 
       - name: school_education_organization_category
         description: Cleansing School education organization categories data
@@ -109,7 +115,7 @@ sources:
             - name: schoolid
               tests:
                 - not_null
-            - name: eo_identificationsystemdescriptor
+            - name: educationorganizatio__ationsystemdescriptor
               tests:
                 - not_null
             - name: identificationcode
@@ -171,6 +177,6 @@ sources:
             - name: schoolid
               tests:
                 - not_null
-            - name: postSecondaryInstitutionId
+            - name: postsecondaryinstitutionid
               tests:
                 - not_null

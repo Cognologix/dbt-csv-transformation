@@ -11,6 +11,7 @@ sc_nslp_ty as (
 
     SELECT
         -- * from {{ref('cl_school_nslp_types')}}
+    loadid,
     schoolid,
     -- lookup TX_NSLP Type Descriptor use descriptor
     CASE
@@ -43,6 +44,7 @@ sc_nslp_ty as (
 ------------------------------------------------------------------------------
 final as (
    SELECT
+        sc_nslp_ty.loadid as LOADID,
 		sc_nslp_ty.schoolid,
 		jsonb_agg(json_build_object(
 				'txNSLPTypeDescriptor', sc_nslp_ty.tx_nslptypedescriptor,
@@ -54,7 +56,10 @@ final as (
 
    FROM
 	    sc_nslp_ty
+   WHERE
+       NULLIF(TRIM(tx_nslptypedescriptor), '') IS NOT NULL
    GROUP BY
+        sc_nslp_ty.loadid,
 		sc_nslp_ty.schoolid
 
 )

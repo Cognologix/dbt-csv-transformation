@@ -44,8 +44,8 @@ sc_iad as (
 sc_mspesd as (
    select namespace, codevalue
    from {{ref('src_descriptor')}} as d
-   JOIN {{ref('src_magnetspecialprogramemphasisschooldescriptor')}} as src_mspesd
-   on d.descriptorid = src_mspesd.magnetspecialprogramemphasisschooldescriptorid
+   JOIN {{ref('src_magnetspecialprogram__hasisschooldescriptor')}} as src_mspesd
+   on d.descriptorid = src_mspesd.magnetspecialprogram__hasisschooldescriptorid
 ),
 
 ------------------------------------------------------------------------------
@@ -82,6 +82,7 @@ sc_tipsdd as (
 ------------------------------------------------------------------------------
 s_b as (
     select
+        loadid,
         schoolid,
         operation,
         charterapprovalschoolyeartypereference_schoolyear,
@@ -91,10 +92,10 @@ s_b as (
         when (NULLIF(TRIM(administrativefundingcontroldescriptor),'') is null)
         THEN NULL
 
-        -- When administrativefundingcontroldescriptor is not null but does not have matching record in descriptor, set as Other Name category
+        -- When administrativefundingcontroldescriptor is not null but does not have matching record in descriptor, set as Not Applicable category
         -- revisit the transformation rule once business logic is confirmed
         when (NULLIF(TRIM(administrativefundingcontroldescriptor),'') is not null and NULLIF(TRIM(sc_afcd.codevalue),'') is NULL)
-        THEN ''
+        THEN 'Not Applicable'
 
         -- Else matching record is found, so concatenate namespace and codevalue to create new administrativefundingcontroldescriptor
         else concat(sc_afcd.namespace, '#', sc_afcd.codevalue)
@@ -105,10 +106,10 @@ s_b as (
         when (NULLIF(TRIM(charterstatusdescriptor),'') is null)
         THEN NULL
 
-        -- When -- Fetch Entry Grade Level Reason Descriptor Values in temp table for look-up validations is not null but does not have matching record in descriptor, set as Other Name category
+        -- When -- Fetch Entry Grade Level Reason Descriptor Values in temp table for look-up validations is not null but does not have matching record in descriptor, set as Not Applicable category
         -- revisit the transformation rule once business logic is confirmed
         when (NULLIF(TRIM(charterstatusdescriptor),'') is not null and NULLIF(TRIM(sc_csd.codevalue),'') is NULL)
-        THEN NULL
+        THEN 'Not Applicable'
 
         -- Else matching record is found, so concatenate namespace and codevalue to create new -- Fetch Entry Grade Level Reason Descriptor Values in temp table for look-up validations
 
@@ -120,10 +121,10 @@ s_b as (
         when (NULLIF(TRIM(charterapprovalagencytypedescriptor),'') is null)
         THEN NULL
 
-        -- When Entry Type Descriptor is not null but does not have matching record in descriptor, set as Other Name category
+        -- When Entry Type Descriptor is not null but does not have matching record in descriptor, set as Not Applicable category
         -- revisit the transformation rule once business logic is confirmed
         when (NULLIF(TRIM(charterapprovalagencytypedescriptor),'') is not null and NULLIF(TRIM(sc_caatd.codevalue),'') is NULL)
-        THEN 'Not Selected'
+        THEN 'Not Applicable'
 
         -- Else matching record is found, so concatenate namespace and codevalue to create new charterapprovalagencytypedescriptor
         else concat(sc_caatd.namespace, '#', sc_caatd.codevalue)
@@ -134,10 +135,10 @@ s_b as (
         when (NULLIF(TRIM(internetaccessdescriptor),'') is null)
         THEN NULL
 
-        -- When internetaccessdescriptor is not null but does not have matching record in descriptor, set as NULL
+        -- When internetaccessdescriptor is not null but does not have matching record in descriptor, set as Not Applicable
         -- revisit the transformation rule once business logic is confirmed
         when (NULLIF(TRIM(internetaccessdescriptor),'') is not null and NULLIF(TRIM(sc_iad.codevalue),'') is NULL)
-        THEN NULL
+        THEN 'Not Applicable'
 
         -- Else matching record is found, so concatenate namespace and codevalue to create new internetaccessdescriptor
         else concat(sc_iad.namespace, '#', sc_iad.codevalue)
@@ -145,18 +146,18 @@ s_b as (
         END as internetaccessdescriptor,
         CASE
         -- When magnetspecialprogramemphasisschooldescriptor contain blanks or null, process as is or set null
-        when (NULLIF(TRIM(magnetspecialprogramemphasisschooldescriptor),'') is null)
+        when (NULLIF(TRIM(magnetspecialprogram__hasisschooldescriptor),'') is null)
         THEN NULL
 
-        -- When magnetspecialprogramemphasisschooldescriptor is not null but does not have matching record in descriptor, set as Other Name category
+        -- When magnetspecialprogramemphasisschooldescriptor is not null but does not have matching record in descriptor, set as Not Applicable category
         -- revisit the transformation rule once business logic is confirmed
-        when (NULLIF(TRIM(magnetspecialprogramemphasisschooldescriptor),'') is not null and NULLIF(TRIM(sc_mspesd.codevalue),'') is NULL)
-        THEN NULL
+        when (NULLIF(TRIM(magnetspecialprogram__hasisschooldescriptor),'') is not null and NULLIF(TRIM(sc_mspesd.codevalue),'') is NULL)
+        THEN 'Not Applicable'
 
         -- Else matching record is found, so concatenate namespace and codevalue to create new magnetspecialprogramemphasisschooldescriptor
         else concat(sc_mspesd.namespace, '#', sc_mspesd.codevalue)
 
-        END as magnetspecialprogramemphasisschooldescriptor,
+        END as magnetspecialprogram__hasisschooldescriptor,
         ----------------------
         nameofinstitution,
         ----------------------+
@@ -165,10 +166,10 @@ s_b as (
         when (NULLIF(TRIM(operationalstatusdescriptor),'') is null)
         THEN NULL
 
-        -- When operationalstatusdescriptor is not null but does not have matching record in descriptor, set as Other Name category
+        -- When operationalstatusdescriptor is not null but does not have matching record in descriptor, set as Not Applicable category
         -- revisit the transformation rule once business logic is confirmed
         when (NULLIF(TRIM(operationalstatusdescriptor),'') is not null and NULLIF(TRIM(sc_osd.codevalue),'') is NULL)
-        THEN NULL
+        THEN 'Not Applicable'
 
         -- Else matching record is found, so concatenate namespace and codevalue to create new operationalstatusdescriptor
         else concat(sc_osd.namespace, '#', sc_osd.codevalue)
@@ -223,7 +224,7 @@ s_b as (
     left outer join sc_iad
         on internetaccessdescriptor = sc_iad.codevalue
     left outer join sc_mspesd
-        on magnetspecialprogramemphasisschooldescriptor = sc_mspesd.codevalue
+        on magnetspecialprogram__hasisschooldescriptor = sc_mspesd.codevalue
     left outer join sc_osd
         on operationalstatusdescriptor = sc_osd.codevalue
     left outer join sc_std
@@ -238,6 +239,7 @@ s_b as (
 ------------------------------------------------------------------------------
 final as (
    SELECT
+        s_b.loadid as LOADID,
 		s_b.schoolid,
         s_b.operation AS operation,
         uuid_generate_v4() AS resourceid,
@@ -254,23 +256,25 @@ final as (
 				'localEducationAgencyId', s_b.localeducationagencyid
 
 			   )AS localEducationAgencyReference,
-            s_b.administrativefundingcontroldescriptor,
-            s_b.charterstatusdescriptor,
-            s_b.charterapprovalagencytypedescriptor,
-            s_b.internetaccessdescriptor,
-            s_b.magnetspecialprogramemphasisschooldescriptor,
-            s_b.nameofinstitution,
-            s_b.operationalstatusdescriptor,
-            s_b.schooltypedescriptor,
-            s_b.shortnameofinstitution,
-            s_b.titleipartaschooldesignationdescriptor,
-            s_b.website,
-            s_b.tx_pkfulldaywaiver,
-            s_b.tx_additionaldaysprogram,
-            s_b.tx_numberofbullyingincidents,
-            s_b.tx_numberofcyberbullyingincidents
+        s_b.administrativefundingcontroldescriptor,
+        s_b.charterstatusdescriptor,
+        s_b.charterapprovalagencytypedescriptor,
+        s_b.internetaccessdescriptor,
+        s_b.magnetspecialprogram__hasisschooldescriptor,
+        s_b.nameofinstitution,
+        s_b.operationalstatusdescriptor,
+        s_b.schooltypedescriptor,
+        s_b.shortnameofinstitution,
+        s_b.titleipartaschooldesignationdescriptor,
+        s_b.website,
+        s_b.tx_pkfulldaywaiver,
+        s_b.tx_additionaldaysprogram,
+        s_b.tx_numberofbullyingincidents,
+        s_b.tx_numberofcyberbullyingincidents
+
    FROM
 	    s_b
+
 )
 
 select * from final

@@ -18,6 +18,7 @@ sc_ia as (
 
     SELECT
         -- * from {{ref('cl_school_international_addresses')}}
+    loadid,
     schoolid,
     -- lookup address Type Descriptor use descriptor
     CASE
@@ -78,6 +79,7 @@ sc_ia as (
 ------------------------------------------------------------------------------
 final as (
    SELECT
+        sc_ia.loadid as LOADID,
 		sc_ia.schoolid,
 		jsonb_agg(json_build_object(
 				'addressTypeDescriptor', sc_ia.addresstypedescriptor,
@@ -97,6 +99,7 @@ final as (
    FROM
 	    sc_ia
    GROUP BY
+        sc_ia.loadid,
 		sc_ia.schoolid
 
 )

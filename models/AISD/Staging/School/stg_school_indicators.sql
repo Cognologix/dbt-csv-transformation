@@ -25,6 +25,7 @@ sc_ind as (
 
     SELECT
         -- * from {{ref('cl_school_addresses')}}
+    loadid,
     schoolid,
     -- lookup Indicator Descriptor use descriptor
     CASE
@@ -92,13 +93,32 @@ sc_ind as (
     on sc_si.indicatorleveldescriptor = sc_ild.codevalue
 
 ),
+------------------------------------------------------------------------------
+-- nested Json block to be created after all validations and transformations are done
+------------------------------------------------------------------------------
+sc_indicators_periods AS (
+	SELECT
+		ind.schoolid,
+		ind.indicatordescriptor,
 
+		jsonb_agg(json_build_object(
+				'beginDate', ind.begindate,
+				'endDate', ind.enddate
+			)
+		) AS periods
+	FROM
+		sc_ind as ind
+	GROUP BY
+		ind.schoolid,
+		ind.indicatordescriptor
+),
 
 ------------------------------------------------------------------------------
 -- Final Json block to be created after all validations and transformations are done
 ------------------------------------------------------------------------------
 final as (
    SELECT
+        sc_ind.loadid as LOADID,
 		sc_ind.schoolid,
 
 		jsonb_agg(json_build_object(
@@ -107,13 +127,21 @@ final as (
 				'indicatorLevelDescriptor', sc_ind.indicatorleveldescriptor,
 				'designatedBy', sc_ind.designatedby,
                 'indicatorValue', sc_ind.indicatorvalue,
-                'beginDate', sc_ind.begindate,
-		        'endDate', sc_ind.enddate
-        ))AS indicators
+                'periods', sip.periods
+	    ))AS indicators
 
    FROM
-	    sc_ind
+       sc_ind
+
+   LEFT JOIN
+		sc_indicators_periods AS sip
+   ON
+		sip.schoolid = sc_ind.schoolid AND
+		sip.indicatordescriptor = sc_ind.indicatordescriptor
+
+
    GROUP BY
+        sc_ind.loadid,
 		sc_ind.schoolid
 
 )

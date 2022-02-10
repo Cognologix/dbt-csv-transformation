@@ -11,6 +11,7 @@ sc_eoc as (
 
     SELECT
         -- * from {{ref('cl_school_education_organization_categories')}}
+    loadid,
     schoolid,
     -- lookup Education Organization Category Descriptor use descriptor
     CASE
@@ -19,10 +20,10 @@ sc_eoc as (
 		when (NULLIF(TRIM(cl_seoc.educationorganizationcategorydescriptor),'') is null)
 		THEN NULL
 
-		-- When Education Organization Category Descriptor is not null but does not have matching record in descriptor, set as BLANK/NULL category
+		-- When Education Organization Category Descriptor is not null but does not have matching record in descriptor, set as Not Applicable/NULL category
 		-- since records with these descriptors are being excluded in raw stage, this check is not required. REVISIT
 		when (NULLIF(TRIM(cl_seoc.educationorganizationcategorydescriptor),'') is not null and NULLIF(TRIM(sc_eocd.codevalue),'') is NULL)
-		THEN ''
+		THEN 'Not Applicable'
 
 		-- Else matching record is found, so concatenate namespace and codevalue to create new Education Organization Category Descriptor
 		else concat(sc_eocd.namespace, '#', sc_eocd.codevalue)
@@ -41,6 +42,7 @@ sc_eoc as (
 ------------------------------------------------------------------------------
 final as (
    SELECT
+        sc_eoc.loadid as LOADID,
 		sc_eoc.schoolid,
 		jsonb_agg(json_build_object(
 				'educationOrganizationCategoryDescriptor', sc_eoc.educationorganizationcategorydescriptor
@@ -49,6 +51,7 @@ final as (
    FROM
 	    sc_eoc
    GROUP BY
+        sc_eoc.loadid,
 		sc_eoc.schoolid
 
 )

@@ -18,7 +18,7 @@ with err_cb as (
                     'schoolyear', schoolyear,
                     'calendartypedescriptor', calendartypedescriptor
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
 		{{ source('public', 'calendar_base')}}
@@ -47,7 +47,7 @@ err_lk_cb as (
                     'schoolyear', schoolyear,
                     'calendartypedescriptor', calendartypedescriptor
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
         {{ref('stg_cal_base')}}
@@ -71,10 +71,10 @@ final as (
 ----------------------------------------------------------------
 -- Incremental flag set for maintaining previous load's error data
 ----------------------------------------------------------------
-select * from final
+select {{ var('LOADID',-1) }} as LOADID, * from final
 {% if is_incremental() %}
 
   -- this filter will only be applied on an incremental run
-  where modified_at > (select max(modified_at) from {{ this }})
+  where processed_at > (select max(processed_at) from {{ this }})
 
 {% endif %}

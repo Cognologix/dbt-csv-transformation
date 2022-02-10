@@ -1,6 +1,7 @@
 WITH sc_nslp_types AS (
 
 	SELECT
+	    {{ var('LOADID',-1) }} as LOADID,
 		schoolid,
 		NULLIF(TRIM(tx_nslptypedescriptor),'') AS tx_nslptypedescriptor,
 		tx_begindate,

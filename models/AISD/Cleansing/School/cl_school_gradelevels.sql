@@ -1,6 +1,7 @@
 WITH sc_gradelevels AS (
 
 	SELECT
+	    {{ var('LOADID',-1) }} as LOADID,
 		schoolid,
 		NULLIF(TRIM(gradeleveldescriptor),'') AS gradeleveldescriptor
 

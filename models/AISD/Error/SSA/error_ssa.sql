@@ -18,7 +18,7 @@ with err_ssa_b as (
                     'entrydate', entrydate,
                     'entrygradeleveldescriptor',entrygradeleveldescriptor
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
 		{{ source('public', 'ssa_base')}}
@@ -43,20 +43,20 @@ err_ssa_agpr as (
         jsonb_agg(json_build_object(
                     'studentuniqueid', studentuniqueid,
                     'schoolid', schoolid,
-                    'agpr_educationorganizationid', agpr_educationorganizationid,
-                    'agpr_graduationplantypedescriptor', agpr_graduationplantypedescriptor,
-                    'agpr_graduationschoolyear', agpr_graduationschoolyear
+                    'alternativegraduatio__ucationorganizationid', alternativegraduatio__ucationorganizationid,
+                    'alternativeGraduatio__nplantypedescriptor', alternativeGraduatio__nplantypedescriptor,
+                    'alternativegraduatio___graduationschoolyear', alternativegraduatio___graduationschoolyear
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
 		{{ source('public', 'ssa_alternate_graduation_plan_reference')}}
 	WHERE
 	    studentuniqueid IS NULL
 	    OR schoolid IS NULL
-	    OR NULLIF(TRIM(agpr_educationorganizationid),'') IS NULL
-	    OR NULLIF(TRIM(agpr_graduationplantypedescriptor),'') IS NULL
-	    OR NULLIF(TRIM(agpr_graduationschoolyear),'') IS NULL
+	    OR NULLIF(TRIM(alternativegraduatio__ucationorganizationid),'') IS NULL
+	    OR NULLIF(TRIM(alternativeGraduatio__nplantypedescriptor),'') IS NULL
+	    OR NULLIF(TRIM(alternativegraduatio___graduationschoolyear),'') IS NULL
 
 
     GROUP BY studentuniqueid,
@@ -76,7 +76,7 @@ err_ssa_ep as (
                     'schoolid', schoolid,
                     'educationplans_educationplandescriptor', educationplans_educationplandescriptor
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
     FROM
      {{ source('public', 'ssa_education_plans')}}
@@ -93,7 +93,7 @@ err_ssa_ep as (
 ----------------------------------------------------------------
 -- Logging records from Student School Association Base entity where look-up is failed
 ----------------------------------------------------------------
---::jsonb
+
 err_lk_ssa_b_tmp as (
     SELECT
         studentuniqueid,
@@ -106,8 +106,10 @@ err_lk_ssa_b_tmp as (
         tx_adaeligibilitydescriptor,
         tx_studentattributiondescriptor
 
-        --jsonb_array_elements(graduationPlanReference)->>'graduationplanreference_graduationplantypedescriptor'
-        --as graduationplanreference_graduationplantypedescriptor
+--        jsonb_array_elements(TexasExtensions)->>'tx_adaeligibilitydescriptor'
+--        as tx_adaeligibilitydescriptor,
+--        jsonb_array_elements(TexasExtensions)->>'tx_studentattributiondescriptor'
+--        as tx_studentattributiondescriptor
 
     FROM
         {{ref('stg_ssa_base')}}
@@ -131,7 +133,7 @@ err_lk_ssa_b AS (
                     --'graduationplanreference_graduationplantypedescriptor', graduationplanreference_graduationplantypedescriptor
 
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
     FROM
         err_lk_ssa_b_tmp
@@ -160,8 +162,8 @@ err_lk_ssa_agpr_tmp as (
     SELECT
         studentuniqueid,
         schoolid,
-        jsonb_array_elements(alternativeGraduationPlans)->>'agpr_graduationplantypedescriptor'
-        as agpr_graduationplantypedescriptor
+        jsonb_array_elements(alternativeGraduationPlans)->>'alternativeGraduatio__nplantypedescriptor'
+        as alternativeGraduatio__nplantypedescriptor
 	FROM
         {{ref('stg_ssa_alternative_graduation_plan_reference')}}
 ),
@@ -175,14 +177,14 @@ err_lk_ssa_agpr as (
         jsonb_agg(json_build_object(
                     'studentuniqueid', studentuniqueid,
                     'schoolid', schoolid,
-                    'agpr_graduationplantypedescriptor', agpr_graduationplantypedescriptor
+                    'alternativeGraduatio__nplantypedescriptor', alternativeGraduatio__nplantypedescriptor
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
         err_lk_ssa_agpr_tmp
 	WHERE
-	    NULLIF(TRIM(agpr_graduationplantypedescriptor),'') IS NULL
+	    NULLIF(TRIM(alternativeGraduatio__nplantypedescriptor),'') IS NULL
     GROUP BY studentuniqueid,
              schoolid
 ),
@@ -211,7 +213,7 @@ err_lk_ssa_ep as (
                     'schoolid', schoolid,
                     'educationplans_educationplandescriptor', educationplans_educationplandescriptor
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
         err_lk_ssa_ep_tmp
@@ -242,10 +244,10 @@ final as (
 ----------------------------------------------------------------
 -- Incremental flag set for maintaining previous load's error data
 ----------------------------------------------------------------
-select * from final
+select {{ var('LOADID',-1) }} as LOADID, * from final
 {% if is_incremental() %}
 
   -- this filter will only be applied on an incremental run
-  where modified_at > (select max(modified_at) from {{ this }})
+  where processed_at > (select max(processed_at) from {{ this }})
 
 {% endif %}

@@ -53,6 +53,7 @@ csdm as (
 ------------------------------------------------------------------------------
 sb as (
     select
+        loadid,
         studentuniqueid,
         operation,
 
@@ -128,10 +129,10 @@ sb as (
         when (NULLIF(TRIM(citizenshipstatusdescriptor),'') is null)
         THEN NULL
 
-        -- When citizenshipstatusdescriptor is not null but does not have matching record in descriptor, set as Other Name category
+        -- When citizenshipstatusdescriptor is not null but does not have matching record in descriptor, set as Not Applicable category
         -- revisit the transformation rule once business logic is confirmed
         when (NULLIF(TRIM(citizenshipstatusdescriptor),'') is not null and NULLIF(TRIM(csdm.codevalue),'') is NULL)
-        THEN NULL
+        THEN 'Not Applicable'
 
         -- Else matching record is found, so concatenate namespace and codevalue to create new other name type descrptor
         else concat(csdm.namespace, '#', csdm.codevalue)
@@ -170,6 +171,7 @@ sb as (
 ------------------------------------------------------------------------------
 final as (
     SELECT
+		sb.loadid as LOADID,
 		sb.studentuniqueid,
 		uuid_generate_v4() AS resourceid,
 		json_build_object(
@@ -182,7 +184,7 @@ final as (
 			'personId', sb.studentuniqueid,
 			'sourceSystemDescriptor', sb.sourcesystemdescriptor
 		) AS personReference,
-		sb.birthcity,
+        sb.birthcity,
 		sb.birthcountrydescriptor,
 		sb.birthdate,
 		sb.birthinternationalprovince,

@@ -1,6 +1,7 @@
 WITH sc_indicators AS (
 
 	SELECT
+	    {{ var('LOADID',-1) }} as LOADID,
 		schoolid,
 		NULLIF(TRIM(indicatordescriptor),'') AS indicatordescriptor,
 		NULLIF(TRIM(indicatorgroupdescriptor),'') AS indicatorgroupdescriptor,

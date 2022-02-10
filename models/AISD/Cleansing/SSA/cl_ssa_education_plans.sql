@@ -1,6 +1,7 @@
 WITH ssa_ep AS (
 
 	SELECT
+	    {{ var('LOADID',-1) }} as LOADID,
 		schoolid,
 		studentuniqueid,
 		NULLIF(TRIM(educationplans_educationplandescriptor),'') AS educationplans_educationplandescriptor

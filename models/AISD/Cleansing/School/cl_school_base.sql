@@ -1,6 +1,7 @@
 WITH school_b AS (
 
 	SELECT
+	    {{ var('LOADID',-1) }} as LOADID,
 		schoolid,
 		NULLIF(TRIM(operation),'') AS operation,
 		NULLIF(TRIM(administrativefundingcontroldescriptor),'') AS administrativefundingcontroldescriptor,
@@ -9,7 +10,7 @@ WITH school_b AS (
 		localeducationagencyid,
 		NULLIF(TRIM(charterstatusdescriptor),'') AS charterstatusdescriptor,
 		NULLIF(TRIM(internetaccessdescriptor),'') AS internetaccessdescriptor,
-		NULLIF(TRIM(magnetspecialprogramemphasisschooldescriptor),'') AS magnetspecialprogramemphasisschooldescriptor,
+		NULLIF(TRIM(magnetspecialprogram__hasisschooldescriptor),'') AS magnetspecialprogram__hasisschooldescriptor,
 		NULLIF(TRIM(nameofinstitution),'') AS nameofinstitution,
 		NULLIF(TRIM(operationalstatusdescriptor),'') AS operationalstatusdescriptor,
 		NULLIF(TRIM(schooltypedescriptor),'') AS schooltypedescriptor,

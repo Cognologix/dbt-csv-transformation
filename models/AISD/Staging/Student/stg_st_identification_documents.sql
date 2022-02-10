@@ -17,6 +17,7 @@ sid as (
 
     SELECT
         -- * from {{ref('cl_st_identification_documents')}}
+    loadid,
     studentuniqueid,
     -- lookup identification document use descriptor
     CASE
@@ -25,10 +26,10 @@ sid as (
 		when (NULLIF(TRIM(spid.identificationdocumentusedescriptor),'') is null)
 		THEN NULL
 
-		-- When identification document is not null but does not have matching record in descriptor, set as BLANK/NULL category
+		-- When identification document is not null but does not have matching record in descriptor, set as Not Applicable category
 		-- since records with these descriptors are being excluded in raw stage, this check is not required. REVISIT
 		when (NULLIF(TRIM(spid.identificationdocumentusedescriptor),'') is not null and NULLIF(TRIM(idudm.codevalue),'') is NULL)
-		THEN ''
+		THEN 'Not Applicable'
 
 		-- Else matching record is found, so concatenate namespace and codevalue to create new visadescriptor
 		else concat(idudm.namespace, '#', idudm.codevalue)
@@ -42,10 +43,10 @@ sid as (
 		when (NULLIF(TRIM(spid.personalinformationverificationdescriptor),'') is null)
 		THEN NULL
 
-		-- When personal info document is not null but does not have matching record in descriptor, set as Other category
+		-- When personal info document is not null but does not have matching record in descriptor, set as Not Applicable
 		-- since records with these descriptors are being excluded in raw stage, this check is not required. REVISIT
 		when (NULLIF(TRIM(spid.personalinformationverificationdescriptor),'') is not null and NULLIF(TRIM(pivdm.codevalue),'') is NULL)
-		THEN 'Other'
+		THEN 'Not Applicable'
 
 		-- Else matching record is found, so concatenate namespace and codevalue to create new personalinformationverificationdescriptor
 		else concat(pivdm.namespace, '#', pivdm.codevalue)
@@ -71,6 +72,7 @@ sid as (
 -- Final Json block to be created after all validations and transformations are done
 final as (
     SELECT
+		sid.loadid as LOADID,
 		sid.studentuniqueid,
 		jsonb_agg(json_build_object(
 				'identificationDocumentUseDescriptor', sid.identificationdocumentusedescriptor,
@@ -84,6 +86,7 @@ final as (
 	FROM
 	  sid
 	GROUP BY
+		sid.loadid,
 		sid.studentuniqueid
 
 )

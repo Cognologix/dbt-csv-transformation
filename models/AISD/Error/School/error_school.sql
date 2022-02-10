@@ -13,7 +13,7 @@ with err_sc_b as (
         jsonb_agg(json_build_object(
                     'schoolid', schoolid,
                     'nameofinstitution',nameofinstitution)) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
 		{{ source('public', 'school_base')}}
@@ -38,7 +38,7 @@ err_sc_address as (
                     'city', city,
                     'postalcode', postalcode
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
 		{{ source('public', 'school_addresses')}}
@@ -65,7 +65,7 @@ err_sc_cet as (
                     'schoolid', schoolid,
                     'tx_campusenrollmenttypedescriptor',tx_campusenrollmenttypedescriptor
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
     FROM
 
     {{ source('public', 'school_campus_enrollment_types')}}
@@ -88,7 +88,7 @@ err_sc_c as (
                     'schoolid', schoolid,
                     'schoolcategorydescriptor',schoolcategorydescriptor
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
 			{{ source('public', 'school_categories')}}
@@ -106,15 +106,18 @@ err_sc_cw as (
         'School Charter Waitlist' as Source_Entity,
         'ERROR: Mandatory Field Null' as Error_Message,
         jsonb_agg(json_build_object(
-                    'schoolid', schoolid
+                    'schoolid', schoolid,
+                    'tx_begindate', tx_begindate,
+                    'tx_enddate', tx_enddate
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
 		{{ source('public', 'school_charter_waitlist')}}
 	WHERE
 	    schoolid IS NULL
-
+	    OR tx_begindate IS NULL
+	    OR tx_enddate IS NULL
 
     GROUP BY schoolid
 ),
@@ -130,7 +133,7 @@ err_sc_eoc as (
                     'schoolid', schoolid,
                     'educationorganizationcategorydescriptor',educationorganizationcategorydescriptor
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
 		{{ source('public', 'school_education_organization_category')}} AS sce
@@ -152,7 +155,7 @@ err_sc_elo_a as (
         jsonb_agg(json_build_object(
                     'schoolid', schoolid
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
 		{{ source('public', 'school_elo_activities')}}
@@ -172,7 +175,7 @@ err_sc_elo_t as (
         jsonb_agg(json_build_object(
                     'schoolid', schoolid
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
 		{{ source('public', 'school_elo_types')}}
@@ -193,7 +196,7 @@ err_sc_gl as (
                     'schoolid', schoolid,
                     'gradeleveldescriptor', gradeleveldescriptor
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
 		{{ source('public', 'school_gradelevels')}}
@@ -214,16 +217,16 @@ err_sc_ic as (
         'ERROR: Mandatory Field Null' as Error_Message,
         jsonb_agg(json_build_object(
                     'schoolid', schoolid,
-                    'eo_identificationsystemdescriptor',eo_identificationsystemdescriptor,
+                    'educationorganizatio__ationsystemdescriptor',educationorganizatio__ationsystemdescriptor,
                     'identificationcode',identificationcode
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
 		{{ source('public', 'school_identification_codes')}}
 	WHERE
 	    schoolid IS NULL
-	    OR NULLIF(TRIM(eo_identificationsystemdescriptor),'') IS NULL
+	    OR NULLIF(TRIM(educationorganizatio__ationsystemdescriptor),'') IS NULL
 	    OR NULLIF(TRIM(identificationcode),'') IS NULL
 
 
@@ -241,7 +244,7 @@ err_sc_ind as (
                     'schoolid', schoolid,
                     'indicatordescriptor',indicatordescriptor
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
 		{{ source('public', 'school_indicators')}}
@@ -265,7 +268,7 @@ err_sc_it as (
                     'institutiontelephonenumbertypedescriptor', institutiontelephonenumbertypedescriptor,
                     'telephonenumber', telephonenumber
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
 		{{ source('public', 'school_institution_telephones')}}
@@ -290,7 +293,7 @@ err_sc_ia as (
                     'countrydescriptor', countrydescriptor,
                     'addressline1', addressline1
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
 		{{ source('public', 'school_international_addresses')}}
@@ -314,7 +317,7 @@ err_sc_nslp_t as (
                     'schoolid', schoolid,
                     'tx_nslptypedescriptor', tx_nslptypedescriptor
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
 		{{ source('public', 'school_nslp_types')}}
@@ -334,15 +337,15 @@ err_sc_psir as (
         'ERROR: Mandatory Field Null' as Error_Message,
         jsonb_agg(json_build_object(
                     'schoolid', schoolid,
-                    'postSecondaryInstitutionId', postSecondaryInstitutionId
+                    'postsecondaryinstitutionid', postsecondaryinstitutionid
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
 		{{ source('public', 'school_post_secondary_institution_reference')}}
 	WHERE
 	    schoolid IS NULL
-        OR postSecondaryInstitutionId IS NULL
+        OR postsecondaryinstitutionid IS NULL
     GROUP BY schoolid
 ),
 
@@ -359,13 +362,13 @@ err_lk_sc_b as (
                     'charterstatusdescriptor', charterstatusdescriptor,
                     'charterapprovalagencytypedescriptor', charterapprovalagencytypedescriptor,
                     'internetaccessdescriptor', internetaccessdescriptor,
-                    'magnetspecialprogramemphasisschooldescriptor', magnetspecialprogramemphasisschooldescriptor,
+                    'magnetspecialprogramemphasisschooldescriptor', magnetspecialprogram__hasisschooldescriptor,
                     'operationalstatusdescriptor', operationalstatusdescriptor,
                     'schooltypedescriptor', schooltypedescriptor,
                     'titleipartaschooldesignationdescriptor', titleipartaschooldesignationdescriptor
 
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
     FROM
         {{ref('stg_school_base')}}
@@ -375,7 +378,7 @@ err_lk_sc_b as (
 	    OR NULLIF(TRIM(charterstatusdescriptor),'') IS NULL
 	    OR NULLIF(TRIM(charterapprovalagencytypedescriptor),'') IS NULL
 	    OR NULLIF(TRIM(internetaccessdescriptor),'') IS NULL
-	    OR NULLIF(TRIM(magnetspecialprogramemphasisschooldescriptor),'') IS NULL
+	    OR NULLIF(TRIM(magnetspecialprogram__hasisschooldescriptor),'') IS NULL
 	    OR NULLIF(TRIM(operationalstatusdescriptor),'') IS NULL
 	    OR NULLIF(TRIM(schooltypedescriptor),'') IS NULL
 	    OR NULLIF(TRIM(titleipartaschooldesignationdescriptor),'') IS NULL
@@ -407,7 +410,7 @@ err_lk_sc_a as (
                     'addresstypedescriptor',addresstypedescriptor,
                     'stateabbreviationdescriptor',stateabbreviationdescriptor
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
         err_lk_sc_a_tmp
@@ -438,7 +441,7 @@ err_lk_sc_cet as (
                     'schoolid', schoolid,
                     'tx_campusenrollmenttypedescriptor', tx_campusenrollmenttypedescriptor
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
         err_lk_sc_cet_tmp
@@ -467,7 +470,7 @@ err_lk_sc_c as (
                     'schoolid', schoolid,
                     'schoolcategorydescriptor', schoolcategorydescriptor
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
         err_lk_sc_c_tmp
@@ -497,7 +500,7 @@ err_lk_sc_eoc as (
                     'schoolid', schoolid,
                     'educationorganizationcategorydescriptor', educationorganizationcategorydescriptor
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
         err_lk_sc_eoc_tmp
@@ -527,7 +530,7 @@ err_lk_sc_elo_a as (
                     'schoolid', schoolid,
                     'tx_eloactivitydescriptor', tx_eloactivitydescriptor
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
         err_lk_sc_elo_a_tmp
@@ -556,7 +559,7 @@ err_lk_sc_elo_t as (
                     'schoolid', schoolid,
                     'tx_elotypedescriptor', tx_elotypedescriptor
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
         err_lk_sc_elo_t_tmp
@@ -572,8 +575,8 @@ err_lk_sc_elo_t as (
 err_lk_sc_ic_tmp as (
     SELECT
         schoolid,
-        jsonb_array_elements(identificationCodes)->>'eo_identificationsystemdescriptor'
-        as eo_identificationsystemdescriptor
+        jsonb_array_elements(identificationCodes)->>'educationorganizatio__ationsystemdescriptor'
+        as educationorganizatio__ationsystemdescriptor
 	FROM
         {{ref('stg_school_identification_codes')}}
 ),
@@ -584,14 +587,14 @@ err_lk_sc_ic as (
         'WARNING: LOVs lookup failed' as Error_Message,
         jsonb_agg(json_build_object(
                     'schoolid', schoolid,
-                    'eo_identificationsystemdescriptor', eo_identificationsystemdescriptor
+                    'educationorganizatio__ationsystemdescriptor', educationorganizatio__ationsystemdescriptor
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
         err_lk_sc_ic_tmp
 	WHERE
-	    NULLIF(TRIM(eo_identificationsystemdescriptor),'') IS NULL
+	    NULLIF(TRIM(educationorganizatio__ationsystemdescriptor),'') IS NULL
 
     GROUP BY schoolid
 ),
@@ -624,7 +627,7 @@ err_lk_sc_ind as (
                     'indicatorgroupdescriptor', indicatorgroupdescriptor,
                     'indicatorleveldescriptor', indicatorleveldescriptor
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
         err_lk_sc_ind_tmp
@@ -657,7 +660,7 @@ err_lk_sc_it as (
                     'schoolid', schoolid,
                     'institutiontelephonenumbertypedescriptor', institutiontelephonenumbertypedescriptor
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
         err_lk_sc_it_tmp
@@ -690,7 +693,7 @@ err_lk_sc_ia as (
                     'addresstypedescriptor', addresstypedescriptor,
                     'countrydescriptor', countrydescriptor
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
         err_lk_sc_ia_tmp
@@ -722,7 +725,7 @@ err_lk_sc_tx_nslp_y as (
                     'schoolid', schoolid,
                     'tx_nslptypedescriptor', tx_nslptypedescriptor
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
         err_lk_sc_tx_nslp_y_tmp
@@ -793,10 +796,10 @@ final as (
 ----------------------------------------------------------------
 -- Incremental flag set for maintaining previous load's error data
 ----------------------------------------------------------------
-select * from final
+select {{ var('LOADID',-1) }} as LOADID, * from final
 {% if is_incremental() %}
 
   -- this filter will only be applied on an incremental run
-  where modified_at > (select max(modified_at) from {{ this }})
+  where processed_at > (select max(processed_at) from {{ this }})
 
 {% endif %}

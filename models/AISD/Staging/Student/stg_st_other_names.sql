@@ -9,7 +9,9 @@ WITH ondm as (
 son as (
 
     SELECT
-    	distinct studentuniqueid,
+    	distinct
+    	loadid,
+    	studentuniqueid,
 
         CASE
         -- When othernametypedescriptor contain blanks or null, process as is or set null
@@ -17,10 +19,10 @@ son as (
         when (NULLIF(TRIM(othernametypedescriptor),'') is null)
         THEN NULL
 
-        -- When othernametypedescriptor is not null but does not have matching record in descriptor, set as Other Name category
+        -- When othernametypedescriptor is not null but does not have matching record in descriptor, set as Not Applicable category
         -- since records with these descriptors are being excluded in raw stage, this check is not required. REVISIT
         when (NULLIF(TRIM(othernametypedescriptor),'') is not null and NULLIF(TRIM(ondm.codevalue),'') is NULL)
-        THEN 'Other Name'
+        THEN 'Not Applicable'
 
         -- Else matching record is found, so concatenate namespace and codevalue to create new other name type descrptor
         else concat(ondm.namespace, '#', ondm.codevalue)
@@ -42,6 +44,7 @@ son as (
 -- Final Json block to be created after all validations and transformations are done
 final as (
    SELECT
+		son.loadid as LOADID,
 		son.studentuniqueid,
 		jsonb_agg(json_build_object(
 				'otherNameTypeDescriptor', son.othernametypedescriptor,
@@ -54,6 +57,7 @@ final as (
    FROM
 	    son
    GROUP BY
+		son.loadid,
 		son.studentuniqueid
 
 )

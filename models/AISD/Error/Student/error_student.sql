@@ -1,6 +1,6 @@
 {{ config(
     materialized='incremental'
-    )
+        )
 }}
 
 ----------------------------------------------------------------
@@ -15,10 +15,10 @@ with err_sb as (
                     'birthdate',birthdate,
                     'firstname',firstname,
                     'lastsurname',lastsurname)) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
-		{{ source('public', 'student_base')}}
+		{{ source('raw_data', 'student_base')}}
     WHERE
 	    studentuniqueid IS NULL
 	    OR birthdate IS NULL
@@ -40,10 +40,10 @@ err_sid as (
                     'identificationdocumentusedescriptor',identificationdocumentusedescriptor,
                     'personalinformationverificationdescriptor',personalinformationverificationdescriptor
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
-		{{ source('public', 'student_identification_documents')}}
+		{{ source('raw_data', 'student_identification_documents')}}
 	WHERE
 	    studentuniqueid IS NULL
 	    OR NULLIF(TRIM(identificationdocumentusedescriptor),'') IS NULL
@@ -63,9 +63,9 @@ err_son as (
                     'STUDENTUNIQUEID', STUDENTUNIQUEID,
                     'OTHERNAMETYPEDESCRIPTOR',OTHERNAMETYPEDESCRIPTOR,
                     'FIRSTNAME',FIRSTNAME)) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
-    FROM PUBLIC.STUDENT_OTHER_NAMES
+    FROM {{ source('raw_data', 'student_other_names')}}
     WHERE STUDENTUNIQUEID IS NULL
         OR NULLIF(TRIM(OTHERNAMETYPEDESCRIPTOR),'') IS NULL
         OR NULLIF(TRIM(firstname),'') IS NULL
@@ -81,13 +81,13 @@ err_spid as (
         'ERROR: Mandatory Field Null' as Error_Message,
         jsonb_agg(json_build_object(
                     'STUDENTUNIQUEID', STUDENTUNIQUEID,
-                    'identificationdocumentusedescriptor', identificationdocumentusedescriptor,
-                    'personalinformationverificationdescriptor', personalinformationverificationdescriptor
+                    'identificationdocumentusedescriptor',identificationdocumentusedescriptor,
+                    'personalinformationverificationdescriptor',personalinformationverificationdescriptor
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
-		{{ source('public', 'student_personal_identification_documents')}}
+		{{ source('raw_data', 'student_personal_identification_documents')}}
 	WHERE
 	    studentuniqueid IS NULL
 	    OR NULLIF(TRIM(identificationdocumentusedescriptor),'') IS NULL
@@ -107,10 +107,10 @@ err_sv as (
                     'STUDENTUNIQUEID', STUDENTUNIQUEID,
                     'visadescriptor',visadescriptor
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
-		{{ source('public', 'student_visas')}}
+		{{ source('raw_data', 'student_visas')}}
 	WHERE
 	    studentuniqueid IS NULL
 	    OR NULLIF(TRIM(visadescriptor),'') IS NULL
@@ -129,10 +129,10 @@ err_sce as (
                     'STUDENTUNIQUEID', STUDENTUNIQUEID,
                     'tx_crisiseventdescriptor',tx_crisiseventdescriptor
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
-		{{ source('public', 'student_crisis_events')}} AS sce
+		{{ source('raw_data', 'student_crisis_events')}} AS sce
 	WHERE
 	    studentuniqueid IS NULL
 	    OR NULLIF(TRIM(tx_crisiseventdescriptor),'') IS NULL
@@ -152,17 +152,16 @@ err_scbg as (
                     'STUDENTUNIQUEID', STUDENTUNIQUEID,
                     'tx_studentcensusblockgroup',tx_studentcensusblockgroup
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
-		{{ source('public', 'student_census_block_groups')}}
+		{{ source('raw_data', 'student_census_block_groups')}}
 	WHERE
 	    studentuniqueid IS NULL
 	    OR NULLIF(TRIM(tx_studentcensusblockgroup),'') IS NULL
 
     GROUP BY studentuniqueid
 ),
-
 
 ----------------------------------------------------------------
 -- Logging records from Student Base entity where look-up is failed
@@ -177,7 +176,7 @@ err_lk_sb as (
                     'birthstateabbreviationdescriptor', birthstateabbreviationdescriptor,
                     'citizenshipstatusdescriptor', citizenshipstatusdescriptor
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
     FROM
         {{ref('stg_st_base')}}
@@ -210,7 +209,7 @@ err_lk_sid as (
                     'STUDENTUNIQUEID', STUDENTUNIQUEID,
                     'identificationdocumentusedescriptor', identificationdocumentusedescriptor
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
         err_lk_sid_tmp
@@ -240,7 +239,7 @@ err_lk_spid as (
                     'STUDENTUNIQUEID', STUDENTUNIQUEID,
                     'identificationdocumentusedescriptor', identificationdocumentusedescriptor
                     )) as Source_Record,
-        CURRENT_TIME as modified_at
+        now() as processed_at
 
 	FROM
         err_lk_spid_tmp
@@ -248,7 +247,35 @@ err_lk_spid as (
 	    NULLIF(TRIM(identificationdocumentusedescriptor),'') IS NULL
     GROUP BY studentuniqueid
 ),
+----------------------------------------------------------------
+-- Logging records from Student Crisis Events where look-up is failed
+----------------------------------------------------------------
+err_lk_ce_tmp as (
+    SELECT
+        studentuniqueid,
+        jsonb_array_elements(crisisEvents)->>'tx_crisiseventdescriptor'
+        as tx_crisiseventdescriptor
+	FROM
+        {{ref('stg_st_crisis_events')}}
+),
+err_lk_sce as (
+    SELECT studentuniqueid,
+        'Student Crisis Events' as Source_Entity,
+        'WARNING: LOVs lookup failed' as Error_Message,
+        jsonb_agg(json_build_object(
+                    'STUDENTUNIQUEID', STUDENTUNIQUEID,
+                    'tx_crisiseventdescriptor', tx_crisiseventdescriptor
+                   )) as Source_Record,
+        now() as processed_at
 
+    FROM
+        err_lk_ce_tmp
+	WHERE
+	    studentuniqueid IS NULL
+	    OR tx_crisiseventdescriptor IS NULL
+
+    GROUP BY studentuniqueid
+),
 
 ----------------------------------------------------------------
 -- Collecting all failures in error table
@@ -273,15 +300,18 @@ final as (
     SELECT * from err_lk_sid
     UNION
     SELECT * from err_lk_spid
+    UNION
+    SELECT * from err_lk_sce
+
 )
 
 ----------------------------------------------------------------
 -- Incremental flag set for maintaining previous load's error data
 ----------------------------------------------------------------
-select * from final
+select {{ var('LOADID',-1) }} as LOADID, * from final
 {% if is_incremental() %}
 
   -- this filter will only be applied on an incremental run
-  where modified_at > (select max(modified_at) from {{ this }})
+  where processed_at > (select max(processed_at) from {{ this }})
 
 {% endif %}

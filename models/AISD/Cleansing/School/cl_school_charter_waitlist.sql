@@ -1,6 +1,7 @@
 WITH sc_charter_waitlist AS (
 
 	SELECT
+	    {{ var('LOADID',-1) }} as LOADID,
 		schoolid,
 		NULLIF(TRIM(tx_numbercharterstudentsenrolled),'') AS tx_numbercharterstudentsenrolled,
 		NULLIF(TRIM(tx_chartereducationalenrollmentcapacity),'') AS tx_chartereducationalenrollmentcapacity,
@@ -13,6 +14,8 @@ WITH sc_charter_waitlist AS (
 
 	WHERE
 	    schoolid IS NOT NULL
+	    AND tx_begindate IS NOT NULL
+		AND tx_enddate IS NOT NULL
 
 )
 

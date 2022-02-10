@@ -1,7 +1,8 @@
 WITH sc_education_organization_categories AS (
 
 	SELECT
-		schoolid,
+		{{ var('LOADID',-1) }} as LOADID,
+        schoolid,
 		NULLIF(TRIM(educationorganizationcategorydescriptor),'') AS educationorganizationcategorydescriptor
     FROM
 		{{ source('public', 'school_education_organization_category')}}

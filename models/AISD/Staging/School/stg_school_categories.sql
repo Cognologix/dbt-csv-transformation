@@ -11,6 +11,7 @@ sc_categories as (
 
     SELECT
         -- * from {{ref('cl_school_categories')}}
+    loadid,
     schoolid,
     -- lookup School Category Descriptor use descriptor
     CASE
@@ -19,10 +20,10 @@ sc_categories as (
 		when (NULLIF(TRIM(cl_sc.schoolcategorydescriptor),'') is null)
 		THEN NULL
 
-		-- When School Category Descriptor is not null but does not have matching record in descriptor, set as BLANK/NULL category
+		-- When School Category Descriptor is not null but does not have matching record in descriptor, set as Not Applicable category
 		-- since records with these descriptors are being excluded in raw stage, this check is not required. REVISIT
 		when (NULLIF(TRIM(cl_sc.schoolcategorydescriptor),'') is not null and NULLIF(TRIM(sc_scd.codevalue),'') is NULL)
-		THEN ''
+		THEN 'Not Applicable'
 
 		-- Else matching record is found, so concatenate namespace and codevalue to create new School Category Descriptor
 		else concat(sc_scd.namespace, '#', sc_scd.codevalue)
@@ -41,6 +42,7 @@ sc_categories as (
 ------------------------------------------------------------------------------
 final as (
    SELECT
+        sc_categories.loadid as LOADID,
 		sc_categories.schoolid,
 		jsonb_agg(json_build_object(
 				'schoolCategoryDescriptor', sc_categories.schoolcategorydescriptor
@@ -49,6 +51,7 @@ final as (
    FROM
 	    sc_categories
    GROUP BY
+        sc_categories.loadid,
 		sc_categories.schoolid
 
 )

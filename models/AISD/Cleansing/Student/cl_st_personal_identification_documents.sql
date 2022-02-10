@@ -1,5 +1,6 @@
 WITH st_personal_identification_documents AS (
 	SELECT
+		{{ var('LOADID',-1) }} as LOADID,
 		spid.studentuniqueid,
         TRIM(spid.identificationdocumentusedescriptor) AS identificationdocumentusedescriptor,
 		TRIM(spid.personalinformationverificationdescriptor) AS personalinformationverificationdescriptor,
@@ -10,7 +11,7 @@ WITH st_personal_identification_documents AS (
 		TRIM(spid.issuername) AS issuername
 
 	FROM
-		{{ source('public', 'student_personal_identification_documents')}} AS spid
+		{{ source('raw_data', 'student_personal_identification_documents')}} AS spid
     WHERE
 	    studentuniqueid IS NOT NULL
 	    AND NULLIF(TRIM(identificationdocumentusedescriptor),'') IS NOT NULL

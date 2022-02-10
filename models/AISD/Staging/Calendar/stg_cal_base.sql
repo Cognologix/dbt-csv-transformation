@@ -10,6 +10,7 @@ WITH c_ctd as (
 cb as (
 
     SELECT
+        loadid,
     	calendarcode,
     	operation,
 		schoolid,
@@ -43,6 +44,7 @@ FROM
 
 final as (
    SELECT
+        cb.loadid as LOADID,
         uuid_generate_v4() AS resourceid,
         cb.calendarcode,
         cb.schoolid,

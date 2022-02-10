@@ -1,6 +1,7 @@
 WITH sc_international_addresses AS (
 
 	SELECT
+	    {{ var('LOADID',-1) }} as LOADID,
 		schoolid,
 		NULLIF(TRIM(CAST(addresstypedescriptor AS TEXT)),'') AS addresstypedescriptor,
 		NULLIF(TRIM(CAST(countrydescriptor AS TEXT)),'') AS countrydescriptor,

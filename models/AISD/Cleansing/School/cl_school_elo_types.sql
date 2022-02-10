@@ -1,6 +1,7 @@
 WITH sc_elo_types AS (
 
 	SELECT
+	    {{ var('LOADID',-1) }} as LOADID,
 		schoolid,
 		NULLIF(TRIM(tx_elotypedescriptor),'') AS tx_elotypedescriptor,
 		tx_begindate,

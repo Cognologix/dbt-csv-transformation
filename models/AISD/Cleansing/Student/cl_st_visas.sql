@@ -1,10 +1,11 @@
 WITH st_visas AS (
 	SELECT
+		{{ var('LOADID',-1) }} as LOADID,
 		sv.studentuniqueid,
 		TRIM(sv.visadescriptor) AS visadescriptor
 
 	FROM
-		{{ source('public', 'student_visas')}} AS sv
+		{{ source('raw_data', 'student_visas')}} AS sv
     WHERE
         studentuniqueid IS NOT NULL AND
 	    nullif(TRIM(visadescriptor),'') IS NOT NULL

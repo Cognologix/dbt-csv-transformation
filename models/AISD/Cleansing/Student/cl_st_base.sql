@@ -1,5 +1,6 @@
 WITH st_base AS (
 	SELECT
+		{{ var('LOADID',-1) }} as LOADID,
 		sb.studentuniqueid,
 		sb.operation,
 		TRIM(sb.sourcesystemdescriptor) AS sourcesystemdescriptor,
@@ -23,7 +24,7 @@ WITH st_base AS (
 		sb.tx_studentid
 
 	FROM
-		{{ source('public', 'student_base')}} AS sb
+		{{ source('raw_data', 'student_base')}} AS sb
     WHERE
 	    studentuniqueid IS NOT NULL
 	    AND birthdate IS NOT NULL

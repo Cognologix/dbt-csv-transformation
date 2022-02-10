@@ -1,6 +1,7 @@
 WITH st_other_names AS (
 
 	SELECT
+		{{ var('LOADID',-1) }} as LOADID,
 		studentuniqueid,
 		NULLIF(TRIM(othernametypedescriptor),'') AS othernametypedescriptor,
 		NULLIF(TRIM(firstname),'') AS firstname,
@@ -10,7 +11,7 @@ WITH st_other_names AS (
 		NULLIF(TRIM(personaltitleprefix),'') AS personaltitleprefix
 
 	FROM
-		{{ source('public', 'student_other_names')}}
+		{{ source('raw_data', 'student_other_names')}}
 
 	WHERE
 	    studentuniqueid IS NOT NULL AND

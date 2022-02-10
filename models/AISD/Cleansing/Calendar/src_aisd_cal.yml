@@ -1,8 +1,8 @@
 version: 2
 sources:
   - name: public
-    database: aisd_poc
-    schema: public
+    database: "{{ var('DB_NAME','aisd_poc') }}"
+    schema: "{{ var('DB_SOURCE_SCHEMA','dbt') }}"
     tables:
       - name: calendar_base
         description: Cleansing calendar Base data

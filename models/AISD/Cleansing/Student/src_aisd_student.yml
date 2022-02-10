@@ -1,8 +1,8 @@
 version: 2
 sources:
-  - name: public
-    database: aisd_poc
-    schema: public
+  - name: raw_data
+    database: "{{ var('DB_NAME','aisd_poc') }}"
+    schema: "{{ var('DB_SOURCE_SCHEMA','dbt') }}"
     tables:
       - name: student_base
         description: Raw Student Base data
@@ -41,7 +41,7 @@ sources:
               - not_null
 
       - name: student_identification_documents
-        description: asasa
+        description: Raw Student Identification Documents
         columns:
           - name: studentuniqueid
             tests:
@@ -54,7 +54,7 @@ sources:
               - not_null
 
       - name: student_census_block_groups
-        description: asas
+        description: Raw Student Census Block Groups Data
         columns:
           - name: studentuniqueid
             tests:
@@ -64,7 +64,7 @@ sources:
               - not_null
 
       - name: student_other_names
-        description: asa
+        description: Raw Student Other Names Data
         columns:
           - name: studentuniqueid
             tests:
@@ -77,7 +77,7 @@ sources:
               - not_null
 
       - name: student_personal_identification_documents
-        description: asad
+        description: Raw Student Personal Identification Documents
         columns:
           - name: studentuniqueid
             tests:
@@ -88,3 +88,4 @@ sources:
           - name: personalinformationverificationdescriptor
             tests:
               - not_null
+

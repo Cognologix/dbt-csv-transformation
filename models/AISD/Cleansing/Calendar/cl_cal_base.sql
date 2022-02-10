@@ -1,6 +1,7 @@
 WITH calendar AS (
 
 	SELECT
+	    {{ var('LOADID',-1) }} as LOADID,
 	    NULLIF(TRIM(operation),'') AS operation,
 		calendarcode,
 		schoolid,

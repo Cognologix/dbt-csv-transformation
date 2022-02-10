@@ -11,6 +11,7 @@ sc_elo_t as (
 
     SELECT
         -- * from {{ref('cl_school_elo_types')}}
+    loadid,
     schoolid,
     -- lookup tx_elo Activity Descriptor use descriptor
     CASE
@@ -41,20 +42,29 @@ sc_elo_t as (
 ------------------------------------------------------------------------------
 -- Final Json block to be created after all validations and transformations are done
 ------------------------------------------------------------------------------
+
 final as (
    SELECT
+        sc_elo_t.loadid as LOADID,
 		sc_elo_t.schoolid,
 		jsonb_agg(json_build_object(
 				'txELOTypeDescriptor', sc_elo_t.tx_elotypedescriptor,
 				'txBeginDate', sc_elo_t.tx_begindate,
-				'txEndDate', sc_elo_t.tx_enddate
+				'txEndDate', sc_elo_t.tx_enddate,
+				'eloActivities', sc_ea.eloActivities
 				)
 
 			) AS eloTypes
 
    FROM
 	    sc_elo_t
+   LEFT JOIN
+        {{ref('stg_school_elo_activities')}} AS sc_ea
+    ON
+        sc_ea.schoolid = sc_elo_t.schoolid
+
    GROUP BY
+        sc_elo_t.loadid,
 		sc_elo_t.schoolid
 
 )

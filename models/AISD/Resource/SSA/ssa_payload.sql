@@ -1,17 +1,18 @@
 {{ config(
-    materialized='table'
+    materialized='incremental'
     )
 }}
 
 WITH  final as (
 
 SELECT
+    ssa_b.loadid,
 	ssa_b.resourceid,
 	ssa_b.externalid,
 	ssa_b.resourcetype,
 	ssa_b.operation,
     ssa_b.status,
-	CURRENT_TIME as modified_at,
+	now() as processed_at,
 	json_build_object(
 		'entryDate', ssa_b.entrydate,
 		'calendarReference', ssa_b.calendarReference,
@@ -33,7 +34,9 @@ SELECT
 		'repeatGradeIndicator', ssa_b.repeatgradeindicator,
 		'residencyStatusDescriptor', ssa_b.residencystatusdescriptor,
 		'schoolChoiceTransfer', ssa_b.schoolchoicetransfer,
-		'termCompletionIndicator', ssa_b.termcompletionindicator
+		'termCompletionIndicator', ssa_b.termcompletionindicator,
+		'ext_', json_build_object('TexasExtensions', json_build_object('txADAEligibilityDescriptor', ssa_b.tx_adaeligibilitydescriptor,
+        'txStudentAttributionDescriptor', ssa_b.tx_studentattributiondescriptor))
 
 	) AS payload
 FROM
@@ -56,7 +59,7 @@ select * from final
 {% if is_incremental() %}
 
   -- this filter will only be applied on an incremental run
-  where modified_at > (select max(modified_at) from {{ this }})
+  where processed_at > (select max(processed_at) from {{ this }})
 
 {% endif %}
 

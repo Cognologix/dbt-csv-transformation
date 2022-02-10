@@ -12,6 +12,8 @@ sources:
         description: Identification Document Use descriptor identifier
       - name: personalinformationverificationdescriptor
         description: Personal info verification descriptor identifier
+      - name: tx_crisiseventdescriptor
+        description: tx_crisis event descriptor identifier
       - name: othernametypedescriptor
         description: Other Name Type Descriptor identifier
       - name: sourcesystemdescriptor
@@ -42,7 +44,7 @@ sources:
         description: TX_ELO Type Descriptor identifier
       - name: gradeleveldescriptor
         description: Grade Level Descriptor identifier
-      - name: eo_identificationsystemdescriptor
+      - name: educationorganizatio__ationsystemdescriptor
         description: Education Organization Identification System Descriptor identifier
       - name: indicatordescriptor
         description: Indicator Descriptor identifier
@@ -78,7 +80,7 @@ sources:
         description: Charter Approval Agency Type Descriptor identifier
       - name: internetaccessdescriptor
         description: Internet Access Descriptor identifier
-      - name: magnetspecialprogramemphasisschooldescriptor
+      - name: magnetspecialprogram__hasisschooldescriptor
         description: Magnet Special Program Emphasis School Descriptor identifier
       - name: operationalstatusdescriptor
         description: Operational Status Descriptor identifier
@@ -90,7 +92,6 @@ sources:
         description: graduationplantypedescriptor identifier
       - name: educationplandescriptor
         description: Education Plan Descriptor identifier
-
 
 
 

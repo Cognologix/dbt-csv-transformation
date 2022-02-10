@@ -21,10 +21,13 @@ sc_ld as (
 ------------------------------------------------------------------------------
 -- Add lookup and other business validations at this stage
 ------------------------------------------------------------------------------
+
+
 sc_add as (
 
     SELECT
         -- * from {{ref('cl_school_addresses')}}
+    loadid,
     schoolid,
     -- lookup Address Type Descriptor use descriptor
     CASE
@@ -65,10 +68,10 @@ sc_add as (
 		when (NULLIF(TRIM(cl_sc_address.localedescriptor),'') is null)
 		THEN NULL
 
-		-- When locale descriptor is not null but does not have matching record in descriptor, set as Other category
+		-- When locale descriptor is not null but does not have matching record in descriptor, set as Not Applicable category
 		-- since records with these descriptors are being excluded in raw stage, this check is not required. REVISIT
 		when (NULLIF(TRIM(cl_sc_address.localedescriptor),'') is not null and NULLIF(TRIM(sc_ld.codevalue),'') is NULL)
-		THEN ''
+		THEN 'Not Applicable'
 
 		-- Else matching record is found, so concatenate namespace and codevalue to create new locale descriptor
 		else concat(sc_ld.namespace, '#', sc_ld.codevalue)
@@ -106,9 +109,34 @@ sc_add as (
 ------------------------------------------------------------------------------
 -- Final Json block to be created after all validations and transformations are done
 ------------------------------------------------------------------------------
+sc_addresses_periods AS (
+	SELECT
+		sa.schoolid,
+		sa.addresstypedescriptor,
+		sa.stateabbreviationdescriptor,
+		sa.city,
+		sa.postalcode,
+		sa.streetnumbername,
+
+		jsonb_agg(json_build_object(
+				'beginDate', sa.begindate,
+				'endDate', sa.enddate
+			)
+		) AS periods
+	FROM
+		sc_add AS sa
+	GROUP BY
+	    sa.schoolid,
+		sa.addresstypedescriptor,
+		sa.stateabbreviationdescriptor,
+		sa.city,
+		sa.postalcode,
+		sa.streetnumbername
+),
 final as (
 
    SELECT
+        sc_add.loadid as LOADID,
 		sc_add.schoolid,
 		jsonb_agg(json_build_object(
 				'addressTypeDescriptor', sc_add.addresstypedescriptor,
@@ -125,14 +153,26 @@ final as (
 				'latitude', sc_add.latitude,
 				'longitude', sc_add.longitude,
 			    'nameOfCounty', sc_add.nameofcounty,
-			    'beginDate', sc_add.begindate,
-		        'endDate', sc_add.enddate
+                'periods', sap.periods
 
         ))AS addresses
 
    FROM
 	    sc_add
+
+   LEFT JOIN
+		sc_addresses_periods AS sap
+	ON
+		sap.schoolid = sc_add.schoolid AND
+		sap.city = sc_add.city AND
+		sap.addresstypedescriptor = sc_add.addresstypedescriptor AND
+		sap.stateabbreviationdescriptor = sc_add.stateabbreviationdescriptor AND
+		sap.postalcode = sc_add.postalcode AND
+		sap.streetnumbername = sc_add.streetnumbername
+
+
    GROUP BY
+        sc_add.loadid,
 		sc_add.schoolid
 
 )

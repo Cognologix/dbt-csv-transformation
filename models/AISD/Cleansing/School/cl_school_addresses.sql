@@ -1,6 +1,7 @@
 WITH sc_addresses AS (
 
 	SELECT
+	    {{ var('LOADID',-1) }} as LOADID,
 		schoolid,
 		NULLIF(TRIM(addresstypedescriptor),'') AS addresstypedescriptor,
 		NULLIF(TRIM(stateabbreviationdescriptor),'') AS stateabbreviationdescriptor,
@@ -16,8 +17,8 @@ WITH sc_addresses AS (
 		NULLIF(TRIM(CAST(latitude AS TEXT)),'') AS latitude,
 		NULLIF(TRIM(CAST(longitude AS TEXT)),'') AS longitude,
 		NULLIF(TRIM(CAST(nameofcounty AS TEXT)),'') AS nameofcounty,
-		begindate,
-		enddate
+		NULLIF(TRIM(begindate),'') AS begindate,
+		NULLIF(TRIM(enddate),'') AS enddate
 
 	FROM
 		{{ source('public', 'school_addresses')}}

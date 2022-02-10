@@ -1,17 +1,18 @@
 {{ config(
-    materialized='table'
+    materialized='incremental'
     )
 }}
 
 WITH final as (
 
 SELECT
+    s_b.loadid,
 	s_b.resourceid,
 	s_b.externalid,
 	s_b.resourcetype,
 	s_b.operation,
 	s_b.status,
-	CURRENT_TIME as modified_at,
+	now() as processed_at,
 	json_build_object(
 		'educationOrganizationCategories', s_eoc.educationorganizationcategories,
 		'gradeLevels', s_gl.gradeLevels,
@@ -23,20 +24,23 @@ SELECT
 		'charterApprovalAgencyTypeDescriptor', s_b.charterapprovalagencytypedescriptor,
 		'charterStatusDescriptor', s_b.charterstatusdescriptor,
 		'identificationCodes', s_ic.identificationCodes,
-		'indicators	', s_i.indicators,
+		'indicators', s_i.indicators,
 		'institutionTelephones', s_it.institutiontelephones,
 		'internationalAddresses', s_ia.internationaladdresses,
 		'internetAccessDescriptor', s_b.internetaccessdescriptor,
-		'magnetSpecialProgramEmphasisSchoolDescriptor', s_b.magnetspecialprogramemphasisschooldescriptor,
+		'magnetSpecialProgramEmphasisSchoolDescriptor', s_b.magnetspecialprogram__hasisschooldescriptor,
 		'nameOfInstitution',s_b.nameofinstitution,
 		'operationalStatusDescriptor', s_b.operationalstatusdescriptor,
 		'schoolCategories', s_c.schoolCategories,
 		'schoolTypeDescriptor', s_b.schooltypedescriptor,
 		'shortNameOfInstitution', s_b.shortnameofinstitution,
 		'titleIPartASchoolDesignationDescriptor', s_b.titleipartaschooldesignationdescriptor,
-		'webSite', s_b.website
+		'webSite', s_b.website,
+		'ext_', json_build_object('TexasExtensions', sc_ext.TexasExtensions,
+		        'TPDM', sc_ext.TPDM
+		        )
 
-	) AS payload
+    ) AS payload
 
 FROM
 	{{ ref('stg_school_base') }} AS s_b
@@ -74,7 +78,10 @@ ON
 	{{ ref('stg_school_categories') }}  AS s_c
 ON
 	s_c.schoolid = s_b.schoolid
-
+	LEFT OUTER JOIN
+	{{ ref('stg_ext_school_new') }}  AS sc_ext
+ON
+	sc_ext.schoolid = s_b.schoolid
 )
 
 select * from final
@@ -82,7 +89,7 @@ select * from final
 {% if is_incremental() %}
 
   -- this filter will only be applied on an incremental run
-  where modified_at > (select max(modified_at) from {{ this }})
+  where processed_at > (select max(processed_at) from {{ this }})
 
 {% endif %}
 

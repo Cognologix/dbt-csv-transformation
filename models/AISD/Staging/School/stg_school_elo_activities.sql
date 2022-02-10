@@ -11,6 +11,7 @@ sc_elo_a as (
 
     SELECT
         -- * from {{ref('cl_school_campus_enrollment_types')}}
+    loadid,
     schoolid,
     -- lookup tx_elo Activity Descriptor use descriptor
     CASE
@@ -43,6 +44,7 @@ sc_elo_a as (
 ------------------------------------------------------------------------------
 final as (
    SELECT
+        sc_elo_a.loadid as LOADID,
 		sc_elo_a.schoolid,
 		jsonb_agg(json_build_object(
 				'txELOActivityDescriptor', sc_elo_a.tx_eloactivitydescriptor,
@@ -53,6 +55,7 @@ final as (
    FROM
 	    sc_elo_a
    GROUP BY
+        sc_elo_a.loadid,
 		sc_elo_a.schoolid
 
 )

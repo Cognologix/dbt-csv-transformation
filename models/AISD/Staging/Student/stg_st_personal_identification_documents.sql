@@ -16,6 +16,7 @@ pivdm as (
 -- Apply lookup and other business transformations at this stage
 spid as (
     select
+    loadid,
     studentuniqueid,
     -- lookup identification document use descriptor
     CASE
@@ -70,6 +71,7 @@ spid as (
 -- Final Json block to be created after all validations and transformations are done
 final as (
    SELECT
+		spid.loadid as LOADID,
 		spid.studentuniqueid,
         jsonb_agg(json_build_object(
 				'identificationDocumentUseDescriptor', spid.identificationdocumentusedescriptor,
@@ -83,6 +85,7 @@ final as (
 	FROM
 	    spid
 	GROUP BY
+		spid.loadid,
 		spid.studentuniqueid
 
 )

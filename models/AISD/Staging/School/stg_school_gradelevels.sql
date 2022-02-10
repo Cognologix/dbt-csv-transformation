@@ -11,6 +11,7 @@ sc_gl as (
 
     SELECT
         -- * from {{ref('cl_school_gradelevels')}}
+    loadid,
     schoolid,
     -- lookup Grade Level Descriptor use descriptor
     CASE
@@ -41,6 +42,7 @@ sc_gl as (
 ------------------------------------------------------------------------------
 final as (
    SELECT
+        sc_gl.loadid as LOADID,
 		sc_gl.schoolid,
 		jsonb_agg(json_build_object(
 				'gradeLevelDescriptor', sc_gl.gradeleveldescriptor
@@ -49,6 +51,7 @@ final as (
    FROM
 	    sc_gl
    GROUP BY
+        sc_gl.loadid,
 		sc_gl.schoolid
 
 )

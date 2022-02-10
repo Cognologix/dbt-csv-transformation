@@ -1,5 +1,6 @@
 WITH ssa_b AS (
 	SELECT
+	    {{ var('LOADID',-1) }} as LOADID,
 		schoolid,
 		studentuniqueid,
 		NULLIF(TRIM(operation),'') AS operation,
@@ -8,9 +9,9 @@ WITH ssa_b AS (
 		calendarreference_schoolid,
 		calendarreference_schoolyear,
 		classofschoolyeartypereference_schoolyear,
-		graduationplanreference_educationorganizationid,
-		NULLIF(TRIM(graduationplanreference_graduationplantypedescriptor),'') AS graduationplanreference_graduationplantypedescriptor,
-		graduationplanreference_graduationschoolyear,
+		graduationplanrefere__ucationorganizationid,
+		NULLIF(TRIM(graduationplanrefere__ionplantypedescriptor),'') AS graduationplanrefere__ionplantypedescriptor,
+		graduationplanrefere___graduationschoolyear,
 		schoolyeartypereference_schoolyear,
 		NULLIF(TRIM(employedwhileenrolled),'') AS employedwhileenrolled,
 		NULLIF(TRIM(entrygradeleveldescriptor),'') AS entrygradeleveldescriptor,

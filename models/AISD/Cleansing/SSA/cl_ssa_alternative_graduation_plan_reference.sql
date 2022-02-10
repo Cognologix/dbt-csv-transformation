@@ -1,11 +1,12 @@
 WITH ssa_agpr AS (
 
 	SELECT
+	    {{ var('LOADID',-1) }} as LOADID,
 		schoolid,
 		studentuniqueid,
-		NULLIF(TRIM(agpr_educationorganizationid),'') AS agpr_educationorganizationid,
-		NULLIF(TRIM(agpr_graduationplantypedescriptor),'') AS agpr_graduationplantypedescriptor,
-		NULLIF(TRIM(agpr_graduationschoolyear),'') AS agpr_graduationschoolyear
+		NULLIF(TRIM(alternativegraduatio__ucationorganizationid),'') AS alternativegraduatio__ucationorganizationid,
+		NULLIF(TRIM(alternativegraduatio__nplantypedescriptor),'') AS alternativegraduatio__nplantypedescriptor,
+		NULLIF(TRIM(alternativegraduatio___graduationschoolyear),'') AS alternativegraduatio___graduationschoolyear
 
 
 
@@ -15,9 +16,9 @@ WITH ssa_agpr AS (
 	WHERE
 	    schoolid IS NOT NULL AND
 	    studentuniqueid IS NOT NULL AND
-        NULLIF(TRIM(agpr_educationorganizationid),'') IS NOT NULL AND
-	    NULLIF(TRIM(agpr_graduationplantypedescriptor),'') IS NOT NULL AND
-	    NULLIF(TRIM(agpr_graduationschoolyear),'') IS NOT NULL
+        NULLIF(TRIM(alternativegraduatio__ucationorganizationid),'') IS NOT NULL AND
+	    NULLIF(TRIM(alternativegraduatio__nplantypedescriptor),'') IS NOT NULL AND
+	    NULLIF(TRIM(alternativegraduatio___graduationschoolyear),'') IS NOT NULL
 
 )
 

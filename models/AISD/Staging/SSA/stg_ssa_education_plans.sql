@@ -11,6 +11,7 @@ s_ep as (
 
     SELECT
         -- * from {{ref('cl_ssa_alternative_graduation_plan_reference')}}
+    loadid,
     schoolid,
     studentuniqueid,
 
@@ -43,6 +44,7 @@ s_ep as (
 ------------------------------------------------------------------------------
 final as (
    SELECT
+        s_ep.loadid as LOADID,
 		s_ep.schoolid,
 		s_ep.studentuniqueid,
 		jsonb_agg(json_build_object(
@@ -53,6 +55,7 @@ final as (
    FROM
 	    s_ep
    GROUP BY
+        s_ep.loadid,
 		s_ep.schoolid,
 		s_ep.studentuniqueid
 

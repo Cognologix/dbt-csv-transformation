@@ -73,6 +73,7 @@ ssa_txsad as (
 ------------------------------------------------------------------------------
 s_b as (
     select
+        loadid,
         schoolid,
 		studentuniqueid,
         operation,
@@ -80,9 +81,9 @@ s_b as (
         calendarreference_schoolid,
         calendarreference_schoolyear,
         classofschoolyeartypereference_schoolyear,
-        graduationplanreference_educationorganizationid,
-        graduationplanreference_graduationplantypedescriptor,
-        graduationplanreference_graduationschoolyear,
+        graduationplanrefere__ucationorganizationid,
+        graduationplanrefere__ionplantypedescriptor,
+        graduationplanrefere___graduationschoolyear,
         schoolyeartypereference_schoolyear,
         entrydate,
         employedwhileenrolled,
@@ -224,6 +225,7 @@ s_b as (
 ------------------------------------------------------------------------------
 final as (
    SELECT
+        s_b.loadid as LOADID,
 		s_b.schoolid,
 		s_b.studentuniqueid,
         s_b.operation AS operation,
@@ -244,10 +246,9 @@ final as (
                 'schoolYear', s_b.classofschoolyeartypereference_schoolyear
             )AS classOfSchoolYearTypeReference,
         json_build_object(
-            'educationOrganizationId', s_b.graduationplanreference_educationorganizationid,
-            'graduationPlanTypeDescriptor', s_b.graduationplanreference_graduationplantypedescriptor,
-            'graduationSchoolYear', s_b.graduationplanreference_graduationschoolyear
-        ) AS graduationPlanReference,
+            'educationOrganizationId', s_b.graduationplanrefere__ucationorganizationid,
+            'graduationPlanTypeDescriptor', s_b.graduationplanrefere__ionplantypedescriptor,
+            'graduationSchoolYear', s_b.graduationplanrefere___graduationschoolyear) AS graduationPlanReference,
         json_build_object(
             'schoolId', s_b.schoolid
         ) AS schoolReference,

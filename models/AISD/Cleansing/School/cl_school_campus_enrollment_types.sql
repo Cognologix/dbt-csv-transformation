@@ -1,6 +1,7 @@
 WITH sc_campus_enrollment_types AS (
 
 	SELECT
+	    {{ var('LOADID',-1) }} as LOADID,
 		schoolid,
 		NULLIF(TRIM(tx_campusenrollmenttypedescriptor),'') AS tx_campusenrollmenttypedescriptor,
 		tx_begindate,

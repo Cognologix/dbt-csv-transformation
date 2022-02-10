@@ -11,6 +11,7 @@ sc_it as (
 
     SELECT
         -- * from {{ref('cl_school_institution_telephones')}}
+    loadid,
     schoolid,
     -- lookup Institution Telephone Number Type Descriptor use descriptor
     CASE
@@ -42,6 +43,7 @@ sc_it as (
 ------------------------------------------------------------------------------
 final as (
    SELECT
+        sc_it.loadid as LOADID,
 		sc_it.schoolid,
 		jsonb_agg(json_build_object(
 				'institutionTelephoneNumberTypeDescriptor', sc_it.institutiontelephonenumbertypedescriptor,
@@ -51,6 +53,7 @@ final as (
    FROM
 	    sc_it
    GROUP BY
+        sc_it.loadid,
 		sc_it.schoolid
 
 )

@@ -11,6 +11,7 @@ sc_cet as (
 
     SELECT
         -- * from {{ref('cl_school_campus_enrollment_types')}}
+    loadid,
     schoolid,
     -- lookup tx_campus enrollment type descriptor use descriptor
     CASE
@@ -43,6 +44,7 @@ sc_cet as (
 ------------------------------------------------------------------------------
 final as (
    SELECT
+        sc_cet.loadid as LOADID,
 		sc_cet.schoolid,
 		jsonb_agg(json_build_object(
 				'txCampusEnrollmentTypeDescriptor', sc_cet.tx_campusenrollmenttypedescriptor,
@@ -53,6 +55,7 @@ final as (
    FROM
 	    sc_cet
    GROUP BY
+        sc_cet.loadid,
 		sc_cet.schoolid
 
 )

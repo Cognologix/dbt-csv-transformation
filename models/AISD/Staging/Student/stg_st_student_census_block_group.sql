@@ -7,6 +7,7 @@ WITH scbg as (
 -- Final Json block to be created after all validations and transformations are done
 final as (
     SELECT
+		scbg.loadid as LOADID,
 		scbg.studentuniqueid,
 		jsonb_agg(json_build_object(
 				'txStudentCensusBlockGroup', scbg.tx_studentcensusblockgroup,
@@ -16,6 +17,7 @@ final as (
 	FROM
 		scbg
 	GROUP BY
+		scbg.loadid,
 		scbg.studentuniqueid
 
 )

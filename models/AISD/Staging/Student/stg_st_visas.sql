@@ -8,6 +8,7 @@ WITH vdm as (
 -- Apply lookup and other business transformations at this stage
 svcl as (
     select
+    sv.loadid,
     sv.studentuniqueid,
     CASE
 		-- When Studentvisas contain blanks or null, process as is or set null
@@ -15,10 +16,10 @@ svcl as (
 		when (NULLIF(TRIM(sv.visadescriptor),'') is null)
 		THEN NULL
 
-		-- When Studentvisas is not null but does not have matching record in descriptor, set as Other Visa category
+		-- When Studentvisas is not null but does not have matching record in descriptor, set as Not Applicable category
 		-- since records with these descriptors are being excluded in raw stage, this check is not required. REVISIT
 		when (NULLIF(TRIM(sv.visadescriptor),'') is not null and NULLIF(TRIM(vdm.codevalue),'') is NULL)
-		THEN 'Other Visa'
+		THEN 'Not Applicable'
 
 		-- Else matching record is found, so concatenate namespace and codevalue to create new visadescriptor
 		else concat(vdm.namespace, '#', vdm.codevalue)
@@ -33,6 +34,7 @@ svcl as (
 -- Final Json block to be created after all validations and transformations are done
 final as (
    SELECT
+		svcl.loadid as LOADID,
 		svcl.studentuniqueid,
 		jsonb_agg(json_build_object(
 				'visaDescriptor', svcl.visadescriptor
@@ -41,6 +43,7 @@ final as (
    FROM
 	    svcl
    GROUP BY
+		svcl.loadid,
 		svcl.studentuniqueid
 )
 

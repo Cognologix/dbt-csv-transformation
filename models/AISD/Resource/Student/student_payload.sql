@@ -1,17 +1,17 @@
 {{ config(
-    materialized='table'
+    materialized='incremental'
     )
 }}
 
 WITH  final as (
 
 SELECT
+	sb.loadid,
 	sb.resourceid,
 	sb.externalid,
 	sb.resourcetype,
 	sb.operation,
-	sb.status,
-	CURRENT_TIME as modified_at,
+	now() as processed_at,
 	json_build_object(
 		'studentUniqueId', sb.studentuniqueid,
 		'personReference', sb.personReference,
@@ -33,9 +33,10 @@ SELECT
 		'otherNames', son.othernames,
 		'personalIdentificationDocuments', spid.personalIdentificationDocuments,
 		'personalTitlePrefix', sb.personalTitlePrefix,
-		'visas', sv.visas
-	) AS payload
-
+		'visas', sv.visas,
+		'ext_', json_build_object('TexasExtensions', s_ext.TexasExtensions)
+	) AS payload,
+	status
 FROM
 	{{ ref('stg_st_base') }} AS sb
 LEFT OUTER JOIN
@@ -54,13 +55,16 @@ LEFT OUTER JOIN
 	{{ ref('stg_st_visas') }}  AS sv
 ON
 	sv.studentuniqueid = sb.studentuniqueid
-
+LEFT OUTER JOIN
+	{{ ref('stg_ext_student') }}  AS s_ext
+ON
+	s_ext.studentuniqueid = sb.studentuniqueid
 )
 
 select * from final
 {% if is_incremental() %}
 
   -- this filter will only be applied on an incremental run
-  where modified_at > (select max(modified_at) from {{ this }})
+  where processed_at > (select max(processed_at) from {{ this }})
 
 {% endif %}

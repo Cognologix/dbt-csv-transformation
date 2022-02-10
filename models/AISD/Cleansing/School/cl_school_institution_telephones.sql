@@ -1,6 +1,7 @@
 WITH sc_institution_telephones AS (
 
 	SELECT
+	    {{ var('LOADID',-1) }} as LOADID,
 		schoolid,
 		NULLIF(TRIM(institutiontelephonenumbertypedescriptor),'') AS institutiontelephonenumbertypedescriptor,
 		NULLIF(TRIM(telephonenumber),'') AS telephonenumber
