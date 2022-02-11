@@ -8,7 +8,7 @@ WITH sc_identification_codes AS (
 
 
 	FROM
-		{{ source('public', 'school_identification_codes')}}
+		{{ source('raw_data', 'school_identification_codes')}}
 
 	WHERE
 	    schoolid IS NOT NULL AND

@@ -6,7 +6,7 @@ WITH sc_post_secondary_institution_reference AS (
 		postsecondaryinstitutionid
 
 	FROM
-		{{ source('public', 'school_post_secondary_institution_reference')}}
+		{{ source('raw_data', 'school_post_secondary_institution_reference')}}
 
 	WHERE
 	    schoolid IS NOT NULL AND

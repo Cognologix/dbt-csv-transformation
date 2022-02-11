@@ -9,7 +9,7 @@ WITH sc_nslp_types AS (
 
 
 	FROM
-		{{ source('public', 'school_nslp_types')}}
+		{{ source('raw_data', 'school_nslp_types')}}
 
 	WHERE
 	    schoolid IS NOT NULL AND

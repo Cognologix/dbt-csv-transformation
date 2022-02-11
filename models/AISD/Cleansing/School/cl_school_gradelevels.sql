@@ -6,7 +6,7 @@ WITH sc_gradelevels AS (
 		NULLIF(TRIM(gradeleveldescriptor),'') AS gradeleveldescriptor
 
 	FROM
-		{{ source('public', 'school_gradelevels')}}
+		{{ source('raw_data', 'school_gradelevels')}}
 
 	WHERE
 	    schoolid IS NOT NULL AND

@@ -8,7 +8,7 @@ WITH sc_elo_activities AS (
 		NULLIF(TRIM(tx_elominutesscheduledperday),'') AS tx_elominutesscheduledperday
 
 	FROM
-		{{source('public', 'school_elo_activities')}}
+		{{source('raw_data', 'school_elo_activities')}}
 
 	WHERE
 	    schoolid IS NOT NULL AND

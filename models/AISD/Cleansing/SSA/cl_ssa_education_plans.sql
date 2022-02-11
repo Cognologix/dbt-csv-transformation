@@ -8,7 +8,7 @@ WITH ssa_ep AS (
 
 
 	FROM
-		{{ source('public', 'ssa_education_plans')}}
+		{{ source('raw_data', 'ssa_education_plans')}}
 
 	WHERE
 	    schoolid IS NOT NULL AND

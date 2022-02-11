@@ -9,7 +9,7 @@ WITH calendar AS (
         NULLIF(TRIM(calendartypedescriptor),'') AS calendartypedescriptor
 
 	FROM
-		{{ source('public', 'calendar_base')}}
+		{{ source('raw_data', 'calendar_base')}}
 
 	WHERE
 	    calendarcode IS NOT NULL AND

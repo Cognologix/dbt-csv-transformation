@@ -125,6 +125,7 @@ sc_addresses_periods AS (
 		) AS periods
 	FROM
 		sc_add AS sa
+	WHERE begindate IS NOT NULL
 	GROUP BY
 	    sa.schoolid,
 		sa.addresstypedescriptor,

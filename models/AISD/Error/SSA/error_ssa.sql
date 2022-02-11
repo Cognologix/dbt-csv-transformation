@@ -21,7 +21,7 @@ with err_ssa_b as (
         now() as processed_at
 
 	FROM
-		{{ source('public', 'ssa_base')}}
+		{{ source('raw_data', 'ssa_base')}}
     WHERE
 	    studentuniqueid IS NULL
 	    OR schoolid IS NULL
@@ -50,7 +50,7 @@ err_ssa_agpr as (
         now() as processed_at
 
 	FROM
-		{{ source('public', 'ssa_alternate_graduation_plan_reference')}}
+		{{ source('raw_data', 'ssa_alternate_graduation_plan_reference')}}
 	WHERE
 	    studentuniqueid IS NULL
 	    OR schoolid IS NULL
@@ -79,7 +79,7 @@ err_ssa_ep as (
         now() as processed_at
 
     FROM
-     {{ source('public', 'ssa_education_plans')}}
+     {{ source('raw_data', 'ssa_education_plans')}}
     WHERE
         studentuniqueid IS NULL
         OR schoolid IS NULL

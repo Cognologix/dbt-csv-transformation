@@ -16,7 +16,7 @@ with err_sc_b as (
         now() as processed_at
 
 	FROM
-		{{ source('public', 'school_base')}}
+		{{ source('raw_data', 'school_base')}}
     WHERE
 	    schoolid IS NULL
 	    OR NULLIF(TRIM(nameofinstitution),'') IS NULL
@@ -41,7 +41,7 @@ err_sc_address as (
         now() as processed_at
 
 	FROM
-		{{ source('public', 'school_addresses')}}
+		{{ source('raw_data', 'school_addresses')}}
 	WHERE
 	    schoolid IS NULL
 	    OR NULLIF(TRIM(addresstypedescriptor),'') IS NULL
@@ -68,7 +68,7 @@ err_sc_cet as (
         now() as processed_at
     FROM
 
-    {{ source('public', 'school_campus_enrollment_types')}}
+    {{ source('raw_data', 'school_campus_enrollment_types')}}
 
     WHERE
         schoolid IS NULL
@@ -91,7 +91,7 @@ err_sc_c as (
         now() as processed_at
 
 	FROM
-			{{ source('public', 'school_categories')}}
+			{{ source('raw_data', 'school_categories')}}
 	WHERE
 	    schoolid IS NULL
 	    OR NULLIF(TRIM(schoolcategorydescriptor),'') IS NULL
@@ -113,7 +113,7 @@ err_sc_cw as (
         now() as processed_at
 
 	FROM
-		{{ source('public', 'school_charter_waitlist')}}
+		{{ source('raw_data', 'school_charter_waitlist')}}
 	WHERE
 	    schoolid IS NULL
 	    OR tx_begindate IS NULL
@@ -136,7 +136,7 @@ err_sc_eoc as (
         now() as processed_at
 
 	FROM
-		{{ source('public', 'school_education_organization_category')}} AS sce
+		{{ source('raw_data', 'school_education_organization_category')}} AS sce
 	WHERE
 	    schoolid IS NULL
 	    OR NULLIF(TRIM(educationorganizationcategorydescriptor),'') IS NULL
@@ -158,7 +158,7 @@ err_sc_elo_a as (
         now() as processed_at
 
 	FROM
-		{{ source('public', 'school_elo_activities')}}
+		{{ source('raw_data', 'school_elo_activities')}}
 	WHERE
 	    schoolid IS NULL
 
@@ -178,7 +178,7 @@ err_sc_elo_t as (
         now() as processed_at
 
 	FROM
-		{{ source('public', 'school_elo_types')}}
+		{{ source('raw_data', 'school_elo_types')}}
 	WHERE
 	    schoolid IS NULL
 
@@ -199,7 +199,7 @@ err_sc_gl as (
         now() as processed_at
 
 	FROM
-		{{ source('public', 'school_gradelevels')}}
+		{{ source('raw_data', 'school_gradelevels')}}
 	WHERE
 	    schoolid IS NULL
 	    OR NULLIF(TRIM(gradeleveldescriptor),'') IS NULL
@@ -223,7 +223,7 @@ err_sc_ic as (
         now() as processed_at
 
 	FROM
-		{{ source('public', 'school_identification_codes')}}
+		{{ source('raw_data', 'school_identification_codes')}}
 	WHERE
 	    schoolid IS NULL
 	    OR NULLIF(TRIM(educationorganizatio__ationsystemdescriptor),'') IS NULL
@@ -247,7 +247,7 @@ err_sc_ind as (
         now() as processed_at
 
 	FROM
-		{{ source('public', 'school_indicators')}}
+		{{ source('raw_data', 'school_indicators')}}
 	WHERE
 	    schoolid IS NULL
 	    OR NULLIF(TRIM(indicatordescriptor),'') IS NULL
@@ -271,7 +271,7 @@ err_sc_it as (
         now() as processed_at
 
 	FROM
-		{{ source('public', 'school_institution_telephones')}}
+		{{ source('raw_data', 'school_institution_telephones')}}
 	WHERE
 	    schoolid IS NULL
 	    OR NULLIF(TRIM(institutiontelephonenumbertypedescriptor),'') IS NULL
@@ -296,7 +296,7 @@ err_sc_ia as (
         now() as processed_at
 
 	FROM
-		{{ source('public', 'school_international_addresses')}}
+		{{ source('raw_data', 'school_international_addresses')}}
 	WHERE
 	    schoolid IS NULL
 	    OR NULLIF(TRIM(CAST(addresstypedescriptor AS TEXT)),'') IS NULL
@@ -320,7 +320,7 @@ err_sc_nslp_t as (
         now() as processed_at
 
 	FROM
-		{{ source('public', 'school_nslp_types')}}
+		{{ source('raw_data', 'school_nslp_types')}}
 	WHERE
 	    schoolid IS NULL
 	    OR NULLIF(TRIM(tx_nslptypedescriptor),'') IS NULL
@@ -342,7 +342,7 @@ err_sc_psir as (
         now() as processed_at
 
 	FROM
-		{{ source('public', 'school_post_secondary_institution_reference')}}
+		{{ source('raw_data', 'school_post_secondary_institution_reference')}}
 	WHERE
 	    schoolid IS NULL
         OR postsecondaryinstitutionid IS NULL

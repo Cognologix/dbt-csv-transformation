@@ -12,7 +12,7 @@ WITH sc_indicators AS (
 		enddate
 
 	FROM
-		{{ source('public', 'school_indicators')}}
+		{{ source('raw_data', 'school_indicators')}}
 
 	WHERE
 	    schoolid IS NOT NULL AND

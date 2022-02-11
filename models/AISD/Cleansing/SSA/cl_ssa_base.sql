@@ -29,7 +29,7 @@ WITH ssa_b AS (
 		NULLIF(TRIM(tx_studentattributiondescriptor),'') AS tx_studentattributiondescriptor
 
 	FROM
-		{{ source('public', 'ssa_base')}}
+		{{ source('raw_data', 'ssa_base')}}
 
 	WHERE
 	    schoolid IS NOT NULL AND

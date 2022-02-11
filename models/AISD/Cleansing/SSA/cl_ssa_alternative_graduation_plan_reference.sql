@@ -11,7 +11,7 @@ WITH ssa_agpr AS (
 
 
 	FROM
-		{{ source('public', 'ssa_alternate_graduation_plan_reference')}}
+		{{ source('raw_data', 'ssa_alternate_graduation_plan_reference')}}
 
 	WHERE
 	    schoolid IS NOT NULL AND

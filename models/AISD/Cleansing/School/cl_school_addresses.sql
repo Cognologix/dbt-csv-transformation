@@ -21,7 +21,7 @@ WITH sc_addresses AS (
 		NULLIF(TRIM(enddate),'') AS enddate
 
 	FROM
-		{{ source('public', 'school_addresses')}}
+		{{ source('raw_data', 'school_addresses')}}
 
 	WHERE
 	    schoolid IS NOT NULL AND

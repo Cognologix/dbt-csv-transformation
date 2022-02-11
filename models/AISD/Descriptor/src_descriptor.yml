@@ -1,19 +1,19 @@
 version: 2
 sources:
   - name: dbt_test
-    database: aisd_poc
-    schema: innive_aisd_meta_data
+    database: "{{ var('DB_NAME') }}"
+    schema: "{{ var('DB_SOURCE_SCHEMA') + '_meta_data'  }}"
     tables:
       - name: descriptor
         description: All descriptors
       - name: visadescriptor
-        description: Visa descriptor identifier
+        description: Visa Descriptor identifier
       - name: identificationdocumentusedescriptor
-        description: Identification Document Use descriptor identifier
+        description: Identification Document Use Descriptor identifier
       - name: personalinformationverificationdescriptor
-        description: Personal info verification descriptor identifier
+        description: Personal info verification Descriptor identifier
       - name: tx_crisiseventdescriptor
-        description: tx_crisis event descriptor identifier
+        description: tx_crisis event Descriptor identifier
       - name: othernametypedescriptor
         description: Other Name Type Descriptor identifier
       - name: sourcesystemdescriptor

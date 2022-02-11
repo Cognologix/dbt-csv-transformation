@@ -108,6 +108,8 @@ sc_indicators_periods AS (
 		) AS periods
 	FROM
 		sc_ind as ind
+	WHERE
+	    begindate IS NOT NULL
 	GROUP BY
 		ind.schoolid,
 		ind.indicatordescriptor

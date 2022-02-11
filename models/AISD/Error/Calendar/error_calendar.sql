@@ -21,7 +21,7 @@ with err_cb as (
         now() as processed_at
 
 	FROM
-		{{ source('public', 'calendar_base')}}
+		{{ source('raw_data', 'calendar_base')}}
     WHERE
 	    calendarcode IS NULL
 	    OR schoolid IS NULL

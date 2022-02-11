@@ -9,7 +9,7 @@ WITH sc_campus_enrollment_types AS (
 
 
 	FROM
-		{{ source('public', 'school_campus_enrollment_types')}}
+		{{ source('raw_data', 'school_campus_enrollment_types')}}
 
 	WHERE
 	    schoolid IS NOT NULL AND

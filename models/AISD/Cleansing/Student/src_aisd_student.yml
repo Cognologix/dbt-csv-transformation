@@ -1,8 +1,8 @@
 version: 2
 sources:
   - name: raw_data
-    database: "{{ var('DB_NAME','aisd_poc') }}"
-    schema: "{{ var('DB_SOURCE_SCHEMA','dbt') }}"
+    database: "{{ var('DB_NAME') }}"
+    schema: "{{ var('DB_SOURCE_SCHEMA') + '_raw_data' }}"
     tables:
       - name: student_base
         description: Raw Student Base data

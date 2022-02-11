@@ -5,7 +5,7 @@ WITH sc_education_organization_categories AS (
         schoolid,
 		NULLIF(TRIM(educationorganizationcategorydescriptor),'') AS educationorganizationcategorydescriptor
     FROM
-		{{ source('public', 'school_education_organization_category')}}
+		{{ source('raw_data', 'school_education_organization_category')}}
 
 	WHERE
 	    schoolid IS NOT NULL AND

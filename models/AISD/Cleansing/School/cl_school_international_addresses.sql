@@ -15,7 +15,7 @@ WITH sc_international_addresses AS (
 		NULLIF(TRIM(CAST(longitude AS TEXT)),'') AS longitude
 
 	FROM
-		{{ source('public', 'school_international_addresses')}}
+		{{ source('raw_data', 'school_international_addresses')}}
 
 	WHERE
 	    schoolid IS NOT NULL AND

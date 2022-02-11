@@ -23,7 +23,7 @@ WITH school_b AS (
 		tx_numberofcyberbullyingincidents AS tx_numberofcyberbullyingincidents
 
 	FROM
-		{{ source('public', 'school_base')}}
+		{{ source('raw_data', 'school_base')}}
 
 	WHERE
 	    schoolid IS NOT NULL AND

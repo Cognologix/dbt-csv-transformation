@@ -8,7 +8,7 @@ WITH sc_elo_types AS (
 		tx_enddate
 
 	FROM
-		{{ source('public', 'school_elo_types')}}
+		{{ source('raw_data', 'school_elo_types')}}
 
 	WHERE
 	    schoolid IS NOT NULL AND
