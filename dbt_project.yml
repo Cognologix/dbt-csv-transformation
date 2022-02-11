@@ -89,4 +89,4 @@ models:
 # This setting configures variables used for this project.
 vars:
   loadid: '-1'
-  DB_AUDIT_SCHEMA: 'meta_data'
+  DB_AUDIT_SCHEMA: 'audit_data'
